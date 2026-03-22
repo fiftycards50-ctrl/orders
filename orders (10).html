@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>متابعة الطلبات</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--p:#1a1a2e;--g:#06d6a0;--y:#f4a61e;--r:#ef476f;--b:#118ab2;--v:#7f77dd;--bg:#f0f2f5;--w:#fff;--br:#e2e8f0;--tx:#1a202c;--mu:#718096;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:13px;}
+
+/* LOGIN */
+.lw{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--p);padding:1rem;}
+.lc{background:var(--w);border-radius:18px;padding:2rem;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.li{width:50px;height:50px;background:#e94560;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
+.li svg{width:24px;height:24px;fill:white;}
+.lc h1{font-size:20px;font-weight:700;color:var(--p);text-align:center;margin-bottom:1.5rem;}
+.fg{margin-bottom:12px;}
+.fg label{display:block;font-size:12px;font-weight:600;color:var(--mu);margin-bottom:4px;}
+.fg input{width:100%;padding:12px 14px;border:1.5px solid var(--br);border-radius:8px;font-family:'Cairo',sans-serif;font-size:16px;background:var(--bg);color:var(--tx);-webkit-appearance:none;}
+.fg input:focus{outline:none;border-color:#e94560;background:white;}
+.lb{width:100%;padding:13px;background:var(--p);color:white;border:none;border-radius:8px;font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.lerr{color:var(--r);font-size:12px;text-align:center;margin-top:8px;}
+.lhint{text-align:center;font-size:12px;color:var(--mu);margin-top:8px;}
+
+/* APP */
+.app{display:none;flex-direction:column;min-height:100vh;}
+.app.active{display:flex;}
+
+/* TOPBAR */
+.topbar{background:var(--p);height:50px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+.tlogo{color:white;font-size:14px;font-weight:700;}
+.tnav{display:flex;gap:2px;}
+.tnb{background:transparent;border:none;color:rgba(255,255,255,0.55);padding:5px 12px;border-radius:6px;font-family:'Cairo',sans-serif;font-size:12px;cursor:pointer;}
+.tnb.active,.tnb:hover{background:rgba(255,255,255,0.15);color:white;}
+.tright{display:flex;align-items:center;gap:8px;}
+.tuser{font-size:10px;color:rgba(255,255,255,0.4);}
+.tib{background:transparent;border:none;color:rgba(255,255,255,0.6);cursor:pointer;padding:4px 8px;border-radius:5px;font-size:12px;}
+.tib:hover{background:rgba(255,255,255,0.15);}
+
+/* MAIN */
+.main{flex:1;padding:16px;}
+.hidden{display:none!important;}
+.empty{text-align:center;padding:2rem;color:var(--mu);}
+
+/* DASHBOARD */
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;}
+.kpi{background:var(--w);border-radius:10px;padding:16px;border-top:3px solid #ddd;}
+.kpi.k0{border-color:var(--g);}
+.kpi.k1{border-color:var(--r);}
+.kpi.k2{border-color:var(--b);}
+.kpi.k3{border-color:var(--y);}
+.kn{font-size:20px;font-weight:700;line-height:1;margin-bottom:4px;}
+.kpi.k0 .kn{color:var(--g);}
+.kpi.k1 .kn{color:var(--r);}
+.kpi.k2 .kn{color:var(--b);}
+.kpi.k3 .kn{color:var(--y);}
+.kl{font-size:11px;color:var(--mu);}
+.ks{font-size:10px;color:#bbb;margin-top:1px;}
+
+.srow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px;}
+.sc{background:var(--w);border-radius:10px;padding:12px 8px;text-align:center;border-top:3px solid #ddd;}
+.sc.s0{border-color:var(--p);}
+.sc.s1{border-color:var(--g);}
+.sc.s2{border-color:var(--y);}
+.sc.s3{border-color:var(--r);}
+.sc.s4{border-color:var(--b);}
+.sn{font-size:22px;font-weight:700;line-height:1;}
+.sc.s0 .sn{color:var(--p);}
+.sc.s1 .sn{color:var(--g);}
+.sc.s2 .sn{color:var(--y);}
+.sc.s3 .sn{color:var(--r);}
+.sc.s4 .sn{color:var(--b);}
+.sl{font-size:11px;color:var(--mu);margin-top:3px;}
+
+.crow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.cc{background:var(--w);border-radius:10px;padding:16px;}
+.cc h4{font-size:13px;font-weight:700;color:var(--p);margin-bottom:14px;}
+.ci-wrap{display:flex;align-items:center;gap:16px;}
+.ci-wrap canvas{flex-shrink:0;width:90px!important;height:90px!important;}
+.legwrap{flex:1;}
+.legrow{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.legdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.legl{font-size:11px;color:#555;flex:1;}
+.legv{font-size:11px;font-weight:700;}
+
+.tod{background:var(--w);border-radius:10px;padding:14px;}
+.tod h3{font-size:13px;font-weight:700;margin-bottom:10px;}
+
+/* ORDERS PAGE */
+.sw{background:var(--w);border-radius:10px;overflow:hidden;border:1px solid var(--br);}
+.sw.fs{position:fixed;inset:0;z-index:999;border-radius:0;display:flex;flex-direction:column;}
+.sw.fs .ss{flex:1;overflow:auto;}
+
+.mbar{display:flex;background:#f8f9fa;border-bottom:1px solid var(--br);overflow-x:auto;scrollbar-width:none;}
+.mbar::-webkit-scrollbar{display:none;}
+.mt{background:transparent;border:none;border-bottom:3px solid transparent;color:var(--mu);padding:9px 14px;font-family:'Cairo',sans-serif;font-size:11px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.mt.active{color:var(--p);border-bottom-color:var(--p);font-weight:700;background:white;}
+
+.stb{padding:8px 12px;border-bottom:1px solid #f0f2f5;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.si{flex:1;min-width:100px;padding:6px 10px;border:1px solid var(--br);border-radius:6px;font-family:'Cairo',sans-serif;font-size:12px;background:var(--bg);}
+.si:focus{outline:none;border-color:var(--p);}
+.ftabs{display:flex;gap:3px;}
+.ft{background:transparent;border:1px solid var(--br);color:var(--mu);padding:4px 10px;border-radius:12px;font-family:'Cairo',sans-serif;font-size:11px;cursor:pointer;}
+.ft.active{background:var(--p);color:white;border-color:var(--p);}
+.fsbtn{background:var(--p);color:white;border:none;padding:5px 12px;border-radius:6px;font-family:'Cairo',sans-serif;font-size:11px;cursor:pointer;white-space:nowrap;}
+
+/* SPREADSHEET TABLE */
+.ss{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table.sh{width:100%;border-collapse:collapse;table-layout:fixed;}
+table.sh th{background:var(--p);color:rgba(255,255,255,0.8);padding:7px 6px;font-size:10px;font-weight:600;text-align:right;border-left:1px solid rgba(255,255,255,0.1);position:relative;white-space:nowrap;overflow:hidden;user-select:none;}
+table.sh th:first-child{border-left:none;}
+table.sh td{padding:0;border-bottom:1px solid #f0f2f5;border-left:1px solid #f0f2f5;vertical-align:middle;}
+table.sh td.num-col{text-align:center;font-size:10px;color:#bbb;background:#f8f9fa;border-left:none;padding:4px 0;}
+
+/* ROW COLORS */
+table.sh tr.rd td{background:#edfff7!important;}
+table.sh tr.rd td.num-col{background:#c8f5e3!important;}
+table.sh tr.rp td{background:#fffbf0!important;}
+table.sh tr.rp td.num-col{background:#ffecc8!important;}
+table.sh tr.rl td{background:#fff0f3!important;}
+table.sh tr.rl td.num-col{background:#ffd6df!important;}
+table.sh tr.re td{background:#edf4ff!important;}
+table.sh tr.re td.num-col{background:#c8dcff!important;}
+table.sh tr:hover td{background:#f0f4ff!important;}
+table.sh tr:hover td.num-col{background:#e8ecf8!important;}
+
+/* CELL INPUTS */
+.ci{width:100%;height:30px;padding:0 7px;border:none;background:transparent;font-family:'Cairo',sans-serif;font-size:11px;color:var(--tx);}
+.ci:focus{outline:2px solid #0f3460;outline-offset:-2px;background:white;}
+.cd{width:100%;height:30px;padding:0 6px;border:none;background:transparent;font-family:'Cairo',sans-serif;font-size:11px;color:#555;cursor:pointer;}
+.cd:focus{outline:2px solid #0f3460;outline-offset:-2px;background:white;}
+.cd.custom{outline:1.5px solid var(--v);border-radius:3px;}
+.cs{width:100%;height:30px;padding:0 4px;border:none;background:transparent;font-family:'Cairo',sans-serif;font-size:11px;color:#555;cursor:pointer;}
+.un-sel{width:100%;height:28px;border:none;background:transparent;font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:#bbb;padding:0 4px;}
+.un-sel.u{color:#c9184a;}
+.un-sel.n{color:#05a87f;}
+.un-sel.c{color:var(--v);}
+.st-sel{width:100%;height:28px;border:none;background:transparent;font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:#bbb;padding:0 4px;}
+.st-sel.done{color:#05a87f;}
+.st-sel.pending{color:#b97d0a;}
+.st-sel.late{color:#c9184a;}
+.st-sel.edit{color:#0277bd;}
+
+/* COLUMN RESIZE HANDLE */
+.rzh{position:absolute;left:0;top:0;bottom:0;width:5px;cursor:col-resize;z-index:10;}
+.rzh:hover,.rzh.active{background:rgba(255,255,255,0.5);}
+
+/* SETTINGS */
+.sec-t{font-size:14px;font-weight:700;color:var(--p);margin:0 0 10px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.g1{margin-bottom:20px;}
+.card{background:var(--w);border-radius:10px;padding:16px;}
+.cardt{font-size:12px;font-weight:700;color:var(--mu);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px;}
+.fl{font-size:11px;color:var(--mu);margin-bottom:4px;}
+.sinp{width:100%;padding:8px 10px;border:1.5px solid var(--br);border-radius:6px;font-family:'Cairo',sans-serif;font-size:12px;margin-bottom:10px;}
+.srow{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.srow label{font-size:12px;flex:1;}
+.snum{width:70px;padding:8px 10px;border:1.5px solid var(--br);border-radius:6px;font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;text-align:center;}
+.dg{display:flex;flex-wrap:wrap;gap:6px;}
+.db{padding:5px 12px;border:1.5px solid var(--br);border-radius:20px;font-family:'Cairo',sans-serif;font-size:11px;cursor:pointer;background:var(--bg);color:var(--mu);}
+.db.on{background:var(--p);color:white;border-color:var(--p);}
+.pi{display:flex;align-items:center;background:#f7f9fc;border-radius:6px;padding:8px 12px;margin-bottom:6px;}
+.pi-name{font-size:12px;flex:1;}
+.pi-price{font-size:12px;font-weight:700;color:var(--p);margin-left:12px;}
+.rm{background:#ffeef2;color:var(--r);border:none;padding:3px 8px;border-radius:5px;font-size:11px;margin-right:8px;cursor:pointer;}
+.ar{display:flex;gap:6px;flex-wrap:wrap;}
+.ar input{flex:1;min-width:80px;padding:8px 10px;border:1.5px solid var(--br);border-radius:6px;font-family:'Cairo',sans-serif;font-size:12px;}
+.ar button{background:var(--p);color:white;border:none;padding:8px 16px;border-radius:6px;font-family:'Cairo',sans-serif;font-size:12px;cursor:pointer;white-space:nowrap;}
+.ei{display:flex;gap:6px;margin-bottom:6px;align-items:center;}
+.ei input{padding:7px 10px;border:1.5px solid var(--br);border-radius:6px;font-family:'Cairo',sans-serif;font-size:12px;}
+.ui{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br);font-size:12px;}
+.exp-total{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px dashed var(--br);}
+.savebtn{background:var(--p);color:white;border:none;padding:11px 32px;border-radius:8px;font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;}
+
+@media(max-width:700px){
+  #mainArea{padding-bottom:70px;}
+  #mobNav{display:flex!important;}
+  .mob-nb.active{color:white!important;}
+  .krow{grid-template-columns:1fr 1fr;}
+  .srow{grid-template-columns:1fr 1fr 1fr;}
+  .crow{grid-template-columns:1fr;}
+  .g3{grid-template-columns:1fr;}
+  .g2{grid-template-columns:1fr;}
+  .tnav{display:none;}
+  .mob-nav{display:flex!important;}
+  .tuser{display:none;}
+  .main{padding:10px;}
+  .kpi{padding:12px 10px;}
+  .kn{font-size:16px;}
+}
+@media(max-width:400px){
+  .krow{grid-template-columns:1fr 1fr;}
+  .srow{grid-template-columns:repeat(3,1fr);}
+  .sc{padding:8px 4px;}
+  .sn{font-size:18px;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="lw" id="lw">
+  <div class="lc">
+    <div class="li"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
+    <h1 id="ltitle">متابعة الطلبات</h1>
+    <div class="fg"><label id="lemail-lbl">البريد الإلكتروني</label><input type="email" id="lE" placeholder="example@email.com" autocomplete="email" autocapitalize="none" autocorrect="off"></div>
+    <div class="fg"><label id="lpass-lbl">كلمة المرور</label><input type="password" id="lP" placeholder="••••••••" autocomplete="current-password"></div>
+    <button class="lb" id="lbtn">دخول</button>
+    <p class="lerr hidden" id="lerr">البريد أو كلمة المرور غير صحيحة</p>
+    <p class="lhint">للتجربة: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="97f6f3fafef9d7f3f2faf8b9f4f8fa">[email&#160;protected]</a> / 1234</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="aw">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="tlogo" id="tlogo">متابعة الطلبات</span>
+      <div class="tnav">
+        <button class="tnb active" onclick="showTab('dash')" id="tp-dash">الرئيسية</button>
+        <button class="tnb" onclick="showTab('orders')" id="tp-orders">الطلبات</button>
+        <button class="tnb" onclick="showTab('settings')" id="tp-settings">الإعدادات</button>
+      </div>
+    </div>
+    <div class="tright">
+      <span class="tuser" id="tuser"></span>
+      <button class="tib" onclick="toggleLang()" id="langBtn">EN</button>
+      <button class="tib" onclick="doLogout()" id="logoutBtn">⏻</button>
+    </div>
+  </div>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <div class="mob-nav" id="mobNav" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--p);z-index:300;border-top:1px solid rgba(255,255,255,0.1);">
+    <button class="mob-nb active" onclick="showTab('dash');setMobActive(this)" id="mob-dash" style="flex:1;background:transparent;border:none;color:rgba(255,255,255,0.6);padding:10px 4px;font-family:'Cairo',sans-serif;font-size:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span id="mob-dash-lbl">الرئيسية</span>
+    </button>
+    <button class="mob-nb" onclick="showTab('orders');setMobActive(this)" id="mob-orders" style="flex:1;background:transparent;border:none;color:rgba(255,255,255,0.6);padding:10px 4px;font-family:'Cairo',sans-serif;font-size:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/></svg>
+      <span id="mob-orders-lbl">الطلبات</span>
+    </button>
+    <button class="mob-nb" onclick="showTab('settings');setMobActive(this)" id="mob-settings" style="flex:1;background:transparent;border:none;color:rgba(255,255,255,0.6);padding:10px 4px;font-family:'Cairo',sans-serif;font-size:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <span id="mob-settings-lbl">الإعدادات</span>
+    </button>
+  </div>
+
+  <div class="main" id="mainArea">
+
+    <!-- DASHBOARD -->
+    <div id="pg-dash">
+      <div class="krow">
+        <div class="kpi k0"><div class="kn" id="krev">0</div><div class="kl" id="kl-rev">الإيرادات</div><div class="ks" id="krevs"></div></div>
+        <div class="kpi k1"><div class="kn" id="kexp">0</div><div class="kl" id="kl-exp">المصاريف</div></div>
+        <div class="kpi k2"><div class="kn" id="knet">0</div><div class="kl" id="kl-net">صافي الربح</div></div>
+        <div class="kpi k3"><div class="kn" id="kord">0</div><div class="kl" id="kl-ord">طلبات منجزة</div></div>
+      </div>
+      <div class="srow">
+        <div class="sc s0"><div class="sn" id="st0">0</div><div class="sl" id="sl0">الكل</div></div>
+        <div class="sc s1"><div class="sn" id="st1">0</div><div class="sl" id="sl1">منجز</div></div>
+        <div class="sc s2"><div class="sn" id="st2">0</div><div class="sl" id="sl2">انتظار</div></div>
+        <div class="sc s3"><div class="sn" id="st3">0</div><div class="sl" id="sl3">متأخر</div></div>
+        <div class="sc s4"><div class="sn" id="st4">0</div><div class="sl" id="sl4">تعديل</div></div>
+      </div>
+      <div class="crow">
+        <div class="cc">
+          <h4 id="ch-status">توزيع حالات الطلبات</h4>
+          <div class="ci-wrap">
+            <canvas id="donutChart" width="90" height="90"></canvas>
+            <div class="legwrap" id="donutLeg"></div>
+          </div>
+        </div>
+        <div class="cc">
+          <h4 id="ch-prods">المنتجات الأكثر طلباً</h4>
+          <div class="ci-wrap">
+            <canvas id="prodChart" width="90" height="90"></canvas>
+            <div class="legwrap" id="prodLeg"></div>
+          </div>
+        </div>
+      </div>
+      <div class="tod">
+        <h3 id="tod-title">طلبات اليوم والمتأخرة</h3>
+        <div id="todList"></div>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div id="pg-orders" class="hidden">
+      <div class="sw" id="sheetWrap">
+        <div class="mbar" id="mbar"></div>
+        <div class="stb">
+          <input class="si" type="text" id="srch" placeholder="🔍 بحث..." oninput="renderSheet()">
+          <div class="ftabs">
+            <button class="ft active" onclick="setF('all')" id="ft-all">الكل</button>
+            <button class="ft" onclick="setF('Pending')" id="ft-p">Pending</button>
+            <button class="ft" onclick="setF('Late')" id="ft-l">Late</button>
+            <button class="ft" onclick="setF('Done')" id="ft-d">Done</button>
+            <button class="ft" onclick="setF('Edit')" id="ft-e">Edit</button>
+          </div>
+          <button class="fsbtn" id="fsbtn" onclick="toggleFS()">⛶ تكبير</button>
+        </div>
+        <div class="ss" id="shScroll">
+          <table class="sh" id="shTable">
+            <thead>
+              <tr id="thead-row">
+                <th style="width:28px;" id="th-num">#</th>
+                <th style="width:82px;" id="th-id">Account ID<div class="rzh" onmousedown="startRz(event,this)"></div></th>
+                <th style="width:100px;" id="th-name">الاسم<div class="rzh" onmousedown="startRz(event,this)"></div></th>
+                <th style="width:108px;" id="th-prod">المنتج<div class="rzh" onmousedown="startRz(event,this)"></div></th>
+                <th style="width:114px;" id="th-order">تاريخ الطلب<div class="rzh" onmousedown="startRz(event,this)"></div></th>
+                <th style="width:50px;" id="th-un">U/N<div class="rzh" onmousedown="startRz(event,this)"></div></th>
+                <th style="width:114px;" id="th-due">موعد التسليم<div class="rzh" onmousedown="startRz(event,this)"></div></th>
+                <th style="width:72px;" id="th-day">اليوم<div class="rzh" onmousedown="startRz(event,this)"></div></th>
+                <th style="width:84px;" id="th-status">الحالة<div class="rzh" onmousedown="startRz(event,this)"></div></th>
+                <th style="width:120px;" id="th-note">ملاحظة<div class="rzh" onmousedown="startRz(event,this)"></div></th>
+              </tr>
+            </thead>
+            <tbody id="shBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="pg-settings" class="hidden">
+      <div class="sec-t" id="sec-gen">⚙️ إعدادات عامة</div>
+      <div class="g3">
+        <div class="card">
+          <div class="cardt" id="cardt-store">المتجر</div>
+          <div class="fl" id="lbl-store">اسم المتجر</div>
+          <input class="sinp" id="cfgStore" placeholder="متجري">
+          <div class="fl" id="lbl-curr">العملة</div>
+          <input class="sinp" id="cfgCurr" placeholder="د.إ" style="margin-bottom:0;">
+        </div>
+        <div class="card">
+          <div class="cardt" id="cardt-delivery">موعد التسليم</div>
+          <div class="srow">
+            <label id="lbl-u">مستعجل (U)</label>
+            <input type="number" class="snum" id="cfgU" value="2" min="1" style="border-color:#ffe0e8;color:#c9184a;background:#fff5f7;">
+            <span style="font-size:11px;color:var(--mu);" id="lbl-days-u">أيام</span>
+          </div>
+          <div class="srow" style="margin-bottom:0;">
+            <label id="lbl-n">عادي (N)</label>
+            <input type="number" class="snum" id="cfgN" value="8" min="1" style="border-color:#c8f0e4;color:#05a87f;background:#f0fff8;">
+            <span style="font-size:11px;color:var(--mu);" id="lbl-days-n">أيام</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="cardt" id="cardt-hol">أيام الإجازة</div>
+          <div class="dg" id="dayGrid"></div>
+        </div>
+      </div>
+
+      <div class="sec-t" id="sec-money">💰 المنتجات والمصاريف</div>
+      <div class="g2">
+        <div class="card">
+          <div class="cardt" id="cardt-prods">منتجاتي</div>
+          <div id="pList"></div>
+          <div class="ar">
+            <input type="text" id="pName" placeholder="اسم المنتج">
+            <input type="number" id="pPrice" placeholder="السعر" style="max-width:90px;">
+            <button onclick="addProd()" id="btn-addprod">إضافة</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="cardt" id="cardt-exp">المصاريف الشهرية</div>
+          <div class="exp-total">
+            <span style="font-size:12px;font-weight:600;" id="lbl-exptotal">الإجمالي الشهري</span>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <input type="number" id="cfgExpF" placeholder="0" oninput="renderDash()" style="width:110px;padding:7px 10px;border:1.5px solid #ffd0d8;border-radius:6px;font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;text-align:center;color:var(--r);background:#fff5f7;">
+              <span style="font-size:11px;color:var(--mu);" id="currLbl">د.إ</span>
+            </div>
+          </div>
+          <div id="expList"></div>
+          <div class="ar" style="margin-top:8px;">
+            <input type="text" id="eName" placeholder="اسم المصروف">
+            <input type="number" id="eAmt" placeholder="المبلغ" style="max-width:90px;">
+            <button onclick="addExp()" id="btn-addexp">إضافة</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-t" id="sec-users">👥 المستخدمون</div>
+      <div class="g1">
+        <div class="card">
+          <div id="uList"></div>
+          <div class="ar" style="margin-top:12px;">
+            <input type="email" id="nuEmail" placeholder="email@example.com">
+            <input type="password" id="nuPass" placeholder="كلمة المرور">
+            <button onclick="addUser()" id="btn-adduser">إضافة مستخدم</button>
+          </div>
+        </div>
+      </div>
+      <button class="savebtn" onclick="saveSettings()" id="btn-save">حفظ الإعدادات</button>
+    </div>
+
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
+function setMobActive(btn){
+  document.querySelectorAll('.mob-nb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script><script>
+/* ─── TRANSLATIONS ─── */
+const TR = {
+  ar: {
+    title:'متابعة الطلبات', loginBtn:'دخول', emailLbl:'البريد الإلكتروني', passLbl:'كلمة المرور',
+    loginErr:'البريد أو كلمة المرور غير صحيحة', langBtn:'EN', logoutBtn:'⏻',
+    dash:'الرئيسية', orders:'الطلبات', settings:'الإعدادات',
+    kRev:'الإيرادات', kExp:'المصاريف', kNet:'صافي الربح', kOrd:'طلبات منجزة',
+    sAll:'الكل', sDone:'منجز', sPend:'انتظار', sLate:'متأخر', sEdit:'تعديل',
+    chStatus:'توزيع حالات الطلبات', chProds:'المنتجات الأكثر طلباً',
+    todTitle:'طلبات اليوم والمتأخرة', todEmpty:'لا توجد طلبات اليوم',
+    noData:'لا توجد بيانات', ftAll:'الكل', fsBig:'⛶ تكبير', fsSmall:'✕ تصغير',
+    thNum:'#', thId:'Account ID', thName:'الاسم', thProd:'المنتج',
+    thOrder:'تاريخ الطلب', thUN:'U/N', thDue:'موعد التسليم',
+    thDay:'اليوم', thStatus:'الحالة', thNote:'ملاحظة',
+    secGen:'⚙️ إعدادات عامة', secMoney:'💰 المنتجات والمصاريف', secUsers:'👥 المستخدمون',
+    cardtStore:'المتجر', cardtDelivery:'موعد التسليم', cardtHol:'أيام الإجازة',
+    cardtProds:'منتجاتي', cardtExp:'المصاريف الشهرية',
+    lblStore:'اسم المتجر', lblCurr:'العملة', lblU:'مستعجل (U)', lblN:'عادي (N)', lblDays:'أيام',
+    lblExpTotal:'الإجمالي الشهري',
+    btnAddProd:'إضافة', btnAddExp:'إضافة', btnAddUser:'إضافة مستخدم', btnSave:'حفظ الإعدادات',
+    saved:'تم الحفظ ✓', exists:'موجود بالفعل', noProds:'لا توجد منتجات بعد',
+    srchPlh:'🔍 بحث...', storePlh:'متجري', currPlh:'د.إ',
+    prodPlh:'اسم المنتج', pricePlh:'السعر', expPlh:'اسم المصروف', amtPlh:'المبلغ',
+    emailPlh:'email@example.com', passPlh:'كلمة المرور',
+    optProd:'— المنتج', optU:'U', optN:'N', optCustom:'C — مخصص',
+    todCols:['Account ID','الاسم','المنتج','موعد التسليم','الحالة'],
+    legDone:'منجز', legPend:'انتظار', legLate:'متأخر', legEdit:'تعديل',
+    days:['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],
+    months:['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
+    ordDone:'طلب منجز',
+  },
+  en: {
+    title:'Order Tracker', loginBtn:'Login', emailLbl:'Email', passLbl:'Password',
+    loginErr:'Incorrect email or password', langBtn:'ع', logoutBtn:'⏻',
+    dash:'Dashboard', orders:'Orders', settings:'Settings',
+    kRev:'Revenue', kExp:'Expenses', kNet:'Net Profit', kOrd:'Completed Orders',
+    sAll:'All', sDone:'Done', sPend:'Pending', sLate:'Late', sEdit:'Edit',
+    chStatus:'Order Status Distribution', chProds:'Top Products',
+    todTitle:"Today's & Overdue", todEmpty:'No orders today',
+    noData:'No data yet', ftAll:'All', fsBig:'⛶ Expand', fsSmall:'✕ Collapse',
+    thNum:'#', thId:'Account ID', thName:'Name', thProd:'Product',
+    thOrder:'Order Date', thUN:'U/N', thDue:'Due Date',
+    thDay:'Day', thStatus:'Status', thNote:'Note',
+    secGen:'⚙️ General Settings', secMoney:'💰 Products & Expenses', secUsers:'👥 Users',
+    cardtStore:'Store', cardtDelivery:'Delivery Time', cardtHol:'Holidays',
+    cardtProds:'My Products', cardtExp:'Monthly Expenses',
+    lblStore:'Store Name', lblCurr:'Currency', lblU:'Urgent (U)', lblN:'Normal (N)', lblDays:'Days',
+    lblExpTotal:'Monthly Total',
+    btnAddProd:'Add', btnAddExp:'Add', btnAddUser:'Add User', btnSave:'Save Settings',
+    saved:'Saved ✓', exists:'Already exists', noProds:'No products yet',
+    srchPlh:'🔍 Search...', storePlh:'My Store', currPlh:'USD',
+    prodPlh:'Product name', pricePlh:'Price', expPlh:'Expense name', amtPlh:'Amount',
+    emailPlh:'email@example.com', passPlh:'Password',
+    optProd:'— Product', optU:'U', optN:'N', optCustom:'C — Custom',
+    todCols:['Account ID','Name','Product','Due Date','Status'],
+    legDone:'Done', legPend:'Pending', legLate:'Late', legEdit:'Edit',
+    days:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    ordDone:'completed orders',
+  }
+};
+
+let lang = 'ar';
+function t(k){ return TR[lang][k] || k; }
+
+function applyLang(){
+  const isAr = lang === 'ar';
+  document.documentElement.lang = lang;
+  document.documentElement.dir = isAr ? 'rtl' : 'ltr';
+  const ids = {
+    ltitle:'title', lbtn:'loginBtn', 'lemail-lbl':'emailLbl', 'lpass-lbl':'passLbl',
+    lerr:'loginErr', langBtn:'langBtn', logoutBtn:'logoutBtn',
+    tlogo:'title', 'tp-dash':'dash', 'tp-orders':'orders', 'tp-settings':'settings',
+    'kl-rev':'kRev', 'kl-exp':'kExp', 'kl-net':'kNet', 'kl-ord':'kOrd',
+    sl0:'sAll', sl1:'sDone', sl2:'sPend', sl3:'sLate', sl4:'sEdit',
+    'ch-status':'chStatus', 'ch-prods':'chProds', 'tod-title':'todTitle',
+    'ft-all':'ftAll', fsbtn:'fsBig',
+    'th-num':'thNum', 'th-id':'thId', 'th-name':'thName', 'th-prod':'thProd',
+    'th-order':'thOrder', 'th-un':'thUN', 'th-due':'thDue',
+    'th-day':'thDay', 'th-status':'thStatus', 'th-note':'thNote',
+    'sec-gen':'secGen', 'sec-money':'secMoney', 'sec-users':'secUsers',
+    'cardt-store':'cardtStore', 'cardt-delivery':'cardtDelivery', 'cardt-hol':'cardtHol',
+    'cardt-prods':'cardtProds', 'cardt-exp':'cardtExp',
+    'lbl-store':'lblStore', 'lbl-curr':'lblCurr', 'lbl-u':'lblU', 'lbl-n':'lblN',
+    'lbl-days-u':'lblDays', 'lbl-days-n':'lblDays', 'lbl-exptotal':'lblExpTotal',
+    'btn-addprod':'btnAddProd', 'btn-addexp':'btnAddExp',
+    'btn-adduser':'btnAddUser', 'btn-save':'btnSave',
+  };
+  Object.entries(ids).forEach(([id,k])=>{ const el=document.getElementById(id); if(el) el.textContent=t(k); });
+  // placeholders
+  const phs = {
+    srch:'srchPlh', cfgStore:'storePlh', cfgCurr:'currPlh',
+    pName:'prodPlh', pPrice:'pricePlh', eName:'expPlh', eAmt:'amtPlh',
+    nuEmail:'emailPlh', nuPass:'passPlh',
+  };
+  Object.entries(phs).forEach(([id,k])=>{ const el=document.getElementById(id); if(el) el.placeholder=t(k); });
+  // fullscreen button text
+  const sw = document.getElementById('sheetWrap');
+  const fsb = document.getElementById('fsbtn');
+  if(fsb) fsb.textContent = sw && sw.classList.contains('fs') ? t('fsSmall') : t('fsBig');
+  // re-render dynamic parts
+  renderDayGrid();
+  renderMonthBar();
+  renderSheet();
+  renderDash();
+  // update mob nav labels
+  const ml = {'mob-dash-lbl':'dash','mob-orders-lbl':'orders','mob-settings-lbl':'settings'};
+  Object.entries(ml).forEach(([id,k])=>{ const el=document.getElementById(id); if(el) el.textContent=t(k); });
+}
+
+function toggleLang(){
+  lang = lang === 'ar' ? 'en' : 'ar';
+  applyLang();
+}
+
+/* ─── DATA ─── */
+let curUser = null, curFilter = 'all';
+let curMonth = new Date().getMonth(), curYear = new Date().getFullYear();
+
+let users = JSON.parse(localStorage.getItem('mou') || '[]');
+if(!users.length){ users=[{email:'admin@demo.com',pass:'1234',role:'admin'}]; saveUsers(); }
+let rows = JSON.parse(localStorage.getItem('mor') || '[]');
+let cfg = JSON.parse(localStorage.getItem('moc') || '{}');
+if(!cfg.u) cfg.u=2; if(!cfg.n) cfg.n=8; if(!cfg.hol) cfg.hol=[5,6];
+if(!cfg.store) cfg.store=''; if(!cfg.curr) cfg.curr='د.إ';
+if(!cfg.products) cfg.products=[]; if(!cfg.expenses) cfg.expenses=[]; if(!cfg.expFixed) cfg.expFixed=0;
+
+function saveUsers(){ localStorage.setItem('mou', JSON.stringify(users)); }
+function saveRows(){ localStorage.setItem('mor', JSON.stringify(rows)); }
+function saveCfg(){ localStorage.setItem('moc', JSON.stringify(cfg)); }
+
+/* ─── HELPERS ─── */
+function getDays(y,m){ return new Date(y,m+1,0).getDate(); }
+
+function getMonthRows(y,m){
+  const total = getDays(y,m);
+  const ex = {};
+  rows.forEach(r=>{ if(r.y===y && r.m===m) ex[r.d]=r; });
+  const res = [];
+  for(let d=1; d<=total; d++){
+    if(ex[d]){ res.push(ex[d]); }
+    else{
+      const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      res.push({id:`${y}-${m}-${d}`,y,m,d,ds,aid:'',name:'',prod:'',un:'',dd:'',status:'',note:'',_e:true});
+    }
+  }
+  return res;
+}
+
+function ensureRow(y,m,d){
+  let r = rows.find(r=>r.y===y && r.m===m && r.d===d);
+  if(!r){
+    const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    r = {id:`${y}-${m}-${d}`,y,m,d,ds,aid:'',name:'',prod:'',un:'N',dd:'',status:'Pending',note:'',_e:false};
+    rows.push(r); saveRows();
+  } else if(r._e){ r._e=false; saveRows(); }
+  return r;
+}
+
+function calcDue(od, un){
+  const days = un==='U' ? cfg.u : cfg.n;
+  const hol = cfg.hol || [5,6];
+  let dt = new Date(od), added = 0;
+  while(added < days){ dt.setDate(dt.getDate()+1); if(!hol.includes(dt.getDay())) added++; }
+  return dt.toISOString().split('T')[0];
+}
+
+function rowClass(r, today){
+  if(!r.status) return '';
+  const due = r.dd ? new Date(r.dd) : null;
+  const dD = due ? new Date(due) : null; if(dD) dD.setHours(0,0,0,0);
+  if(dD && dD < today && r.status !== 'Done') return 'rl';
+  if(r.status==='Done') return 'rd';
+  if(r.status==='Pending') return 'rp';
+  if(r.status==='Edit') return 're';
+  if(r.status==='Late') return 'rl';
+  return '';
+}
+
+/* ─── AUTH ─── */
+function doLogin(){
+  const email = (document.getElementById('lE').value || '').trim().toLowerCase();
+  const pass = (document.getElementById('lP').value || '');
+  if(!email || !pass){ return; }
+  const user = users.find(u=>u.email.toLowerCase()===email && u.pass===pass);
+  if(user){
+    curUser = user;
+    document.getElementById('lw').style.display = 'none';
+    document.getElementById('aw').classList.add('active');
+    document.getElementById('tuser').textContent = user.email;
+    document.getElementById('lerr').classList.add('hidden');
+    loadCfgUI();
+    setTimeout(()=>{ applyLang(); }, 150);
+  } else {
+    document.getElementById('lerr').classList.remove('hidden');
+  }
+}
+// Support both click and touch on login button
+const lbtnEl = document.getElementById('lbtn');
+lbtnEl.addEventListener('click', doLogin);
+lbtnEl.addEventListener('touchend', function(e){ e.preventDefault(); doLogin(); });
+document.getElementById('lP').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+
+function doLogout(){
+  curUser = null;
+  document.getElementById('lw').style.display = 'flex';
+  document.getElementById('aw').classList.remove('active');
+}
+
+/* ─── TABS ─── */
+function showTab(tab){
+  ['dash','orders','settings'].forEach(t=>{
+    document.getElementById('pg-'+t).classList.add('hidden');
+    document.getElementById('tp-'+t).classList.remove('active');
+  });
+  document.getElementById('pg-'+tab).classList.remove('hidden');
+  document.getElementById('tp-'+tab).classList.add('active');
+  if(tab==='orders'){ renderMonthBar(); renderSheet(); }
+  if(tab==='dash') renderDash();
+  if(tab==='settings') loadCfgUI();
+}
+
+/* ─── SETTINGS ─── */
+function loadCfgUI(){
+  document.getElementById('cfgStore').value = cfg.store || '';
+  document.getElementById('cfgCurr').value = cfg.curr || 'د.إ';
+  document.getElementById('cfgU').value = cfg.u;
+  document.getElementById('cfgN').value = cfg.n;
+  document.getElementById('cfgExpF').value = cfg.expFixed || 0;
+  document.getElementById('currLbl').textContent = cfg.curr || 'د.إ';
+  renderDayGrid(); renderProdList(); renderExpList(); renderUserList();
+}
+
+function renderDayGrid(){
+  const days = t('days');
+  document.getElementById('dayGrid').innerHTML = days.map((d,i)=>
+    `<button class="db ${(cfg.hol||[]).includes(i)?'on':''}" onclick="toggleDay(${i})">${d}</button>`
+  ).join('');
+}
+function toggleDay(i){
+  const idx = cfg.hol.indexOf(i);
+  if(idx>=0) cfg.hol.splice(idx,1); else cfg.hol.push(i);
+  renderDayGrid();
+}
+function saveSettings(){
+  cfg.store = document.getElementById('cfgStore').value;
+  cfg.curr = document.getElementById('cfgCurr').value || 'د.إ';
+  cfg.u = parseInt(document.getElementById('cfgU').value) || 2;
+  cfg.n = parseInt(document.getElementById('cfgN').value) || 8;
+  cfg.expFixed = parseFloat(document.getElementById('cfgExpF').value) || 0;
+  saveCfg();
+  document.getElementById('currLbl').textContent = cfg.curr;
+  renderDash();
+  alert(t('saved'));
+}
+
+function renderProdList(){
+  const el = document.getElementById('pList');
+  if(!cfg.products.length){ el.innerHTML=`<p style="font-size:12px;color:var(--mu);margin-bottom:10px;">${t('noProds')}</p>`; return; }
+  el.innerHTML = cfg.products.map((p,i)=>`
+    <div class="pi">
+      <span class="pi-name">${p.name}</span>
+      <span class="pi-price">${p.price} ${cfg.curr}</span>
+      <button class="rm" onclick="rmProd(${i})">×</button>
+    </div>`).join('');
+}
+function addProd(){
+  const n = document.getElementById('pName').value.trim();
+  const p = parseFloat(document.getElementById('pPrice').value) || 0;
+  if(!n) return;
+  cfg.products.push({name:n, price:p}); saveCfg();
+  document.getElementById('pName').value = '';
+  document.getElementById('pPrice').value = '';
+  renderProdList(); renderSheet(); renderDash();
+}
+function rmProd(i){ cfg.products.splice(i,1); saveCfg(); renderProdList(); renderSheet(); renderDash(); }
+
+function syncExpTotal(){
+  const total = cfg.expenses.reduce((s,e)=>s+parseFloat(e.amt||0), 0);
+  cfg.expFixed = total; saveCfg();
+  document.getElementById('cfgExpF').value = total;
+}
+function renderExpList(){
+  const el = document.getElementById('expList');
+  if(!cfg.expenses.length){ el.innerHTML=''; return; }
+  el.innerHTML = cfg.expenses.map((e,i)=>`
+    <div class="ei">
+      <input type="text" value="${e.name}" onchange="cfg.expenses[${i}].name=this.value;saveCfg();" style="flex:1;">
+      <input type="number" value="${e.amt}" onchange="cfg.expenses[${i}].amt=parseFloat(this.value)||0;saveCfg();syncExpTotal();renderDash();" style="width:90px;text-align:center;">
+      <button class="rm" onclick="rmExp(${i})">×</button>
+    </div>`).join('');
+}
+function addExp(){
+  const n = document.getElementById('eName').value.trim();
+  const a = parseFloat(document.getElementById('eAmt').value) || 0;
+  if(!n) return;
+  cfg.expenses.push({name:n, amt:a}); saveCfg(); syncExpTotal();
+  document.getElementById('eName').value = '';
+  document.getElementById('eAmt').value = '';
+  renderExpList(); renderDash();
+}
+function rmExp(i){ cfg.expenses.splice(i,1); saveCfg(); if(cfg.expenses.length) syncExpTotal(); renderExpList(); renderDash(); }
+
+function renderUserList(){
+  document.getElementById('uList').innerHTML = users.map((u,i)=>`
+    <div class="ui">
+      <span>${u.email}${u.role==='admin'?' 👑':''}</span>
+      ${u.email!==curUser.email ? `<button class="rm" onclick="rmUser(${i})">×</button>` : ''}
+    </div>`).join('');
+}
+function addUser(){
+  const e = document.getElementById('nuEmail').value.trim();
+  const p = document.getElementById('nuPass').value;
+  if(!e||!p) return;
+  if(users.find(u=>u.email.toLowerCase()===e.toLowerCase())) return alert(t('exists'));
+  users.push({email:e, pass:p, role:'user'}); saveUsers();
+  document.getElementById('nuEmail').value = '';
+  document.getElementById('nuPass').value = '';
+  renderUserList();
+}
+function rmUser(i){ users.splice(i,1); saveUsers(); renderUserList(); }
+
+/* ─── MONTH BAR ─── */
+function renderMonthBar(){
+  const months = t('months');
+  const bar = document.getElementById('mbar');
+  bar.innerHTML = '';
+  for(let m=0; m<12; m++){
+    const btn = document.createElement('button');
+    btn.className = 'mt' + (m===curMonth ? ' active' : '');
+    btn.textContent = months[m] + ' ' + curYear;
+    btn.onclick = (()=>{ const mm=m; return ()=>setMonth(mm, curYear); })();
+    bar.appendChild(btn);
+  }
+  const active = bar.querySelector('.active');
+  if(active) setTimeout(()=>active.scrollIntoView({block:'nearest',inline:'center'}), 50);
+}
+function setMonth(m, y){ curMonth=m; curYear=y; renderMonthBar(); renderSheet(); }
+
+/* ─── FILTER ─── */
+function setF(f){
+  curFilter = f;
+  ['ft-all','ft-p','ft-l','ft-d','ft-e'].forEach(id=>document.getElementById(id)?.classList.remove('active'));
+  const map = {all:'ft-all', Pending:'ft-p', Late:'ft-l', Done:'ft-d', Edit:'ft-e'};
+  document.getElementById(map[f])?.classList.add('active');
+  renderSheet();
+}
+
+/* ─── FULLSCREEN ─── */
+function toggleFS(){
+  const sw = document.getElementById('sheetWrap');
+  const btn = document.getElementById('fsbtn');
+  sw.classList.toggle('fs');
+  btn.textContent = sw.classList.contains('fs') ? t('fsSmall') : t('fsBig');
+}
+
+/* ─── COLUMN RESIZE ─── */
+let rzState = null;
+function startRz(e, handle){
+  e.preventDefault();
+  const th = handle.parentElement;
+  rzState = {th, startX:e.clientX, startW:th.offsetWidth, handle};
+  handle.classList.add('active');
+  document.addEventListener('mousemove', onRzMove);
+  document.addEventListener('mouseup', onRzUp);
+  // touch support
+  document.addEventListener('touchmove', onRzTouchMove, {passive:false});
+  document.addEventListener('touchend', onRzUp);
+}
+function onRzMove(e){
+  if(!rzState) return;
+  const dir = document.documentElement.dir==='rtl' ? -1 : 1;
+  const diff = (rzState.startX - e.clientX) * dir;
+  rzState.th.style.width = Math.max(40, rzState.startW + diff) + 'px';
+}
+function onRzTouchMove(e){ e.preventDefault(); if(rzState){ const t=e.touches[0]; onRzMove({clientX:t.clientX}); } }
+function onRzUp(){
+  if(rzState){ rzState.handle.classList.remove('active'); rzState=null; }
+  document.removeEventListener('mousemove', onRzMove);
+  document.removeEventListener('mouseup', onRzUp);
+  document.removeEventListener('touchmove', onRzTouchMove);
+  document.removeEventListener('touchend', onRzUp);
+}
+
+/* ─── SHEET RENDER ─── */
+function getProdOpts(sel){
+  return `<option value="">${t('optProd')}</option>` +
+    cfg.products.map(p=>`<option value="${p.name}" ${sel===p.name?'selected':''}>${p.name}</option>`).join('');
+}
+
+function renderSheet(){
+  const search = (document.getElementById('srch')?.value || '').toLowerCase();
+  const today = new Date(); today.setHours(0,0,0,0);
+  const days = t('days');
+  const mrows = getMonthRows(curYear, curMonth).filter(r=>{
+    if(curFilter !== 'all' && r.status !== curFilter) return false;
+    if(search && !Object.values(r).some(v=>String(v).toLowerCase().includes(search))) return false;
+    return true;
+  });
+
+  document.getElementById('shBody').innerHTML = mrows.map(r=>{
+    const due = r.dd ? new Date(r.dd) : null;
+    const dD = due ? new Date(due) : null; if(dD) dD.setHours(0,0,0,0);
+    const isLate = dD && dD < today && r.status && r.status !== 'Done';
+    const dayName = r.dd ? days[new Date(r.dd).getDay()] : '';
+    const rc = rowClass(r, today);
+    const isCustom = r.un === 'C';
+    return `<tr class="${rc}" id="row-${r.id}">
+      <td class="num-col">${r.d}</td>
+      <td><input class="ci" value="${r.aid||''}" onchange="upd('${r.id}','aid',this.value,${r.d})"></td>
+      <td><input class="ci" value="${r.name||''}" onchange="upd('${r.id}','name',this.value,${r.d})"></td>
+      <td><select class="cs" onchange="upd('${r.id}','prod',this.value,${r.d});renderDash()">${getProdOpts(r.prod)}</select></td>
+      <td><input class="cd" type="date" value="${r.ds||''}" onchange="updDate('${r.id}',this.value,${r.d})"></td>
+      <td><select class="un-sel ${r.un==='U'?'u':r.un==='N'?'n':r.un==='C'?'c':''}"
+            onchange="updUN('${r.id}',this.value,${r.d});this.className='un-sel '+(this.value==='U'?'u':this.value==='N'?'n':this.value==='C'?'c':'')">
+        <option value="">—</option>
+        <option value="U" ${r.un==='U'?'selected':''}>${t('optU')}</option>
+        <option value="N" ${r.un==='N'?'selected':''}>${t('optN')}</option>
+        <option value="C" ${r.un==='C'?'selected':''} style="color:var(--v);font-weight:700;">${t('optCustom')}</option>
+      </select></td>
+      <td><input class="cd ${isCustom?'custom':''}" type="date" value="${r.dd||''}"
+            style="${isLate?'color:var(--r);font-weight:600;':''}"
+            onchange="upd('${r.id}','dd',this.value,${r.d});renderSheet()"></td>
+      <td style="padding:0 7px;font-size:11px;color:var(--mu);">${dayName}</td>
+      <td><select class="st-sel ${r.status?r.status.toLowerCase():''}"
+            onchange="upd('${r.id}','status',this.value,${r.d});this.className='st-sel '+this.value.toLowerCase();setRowColor(this.closest('tr'),this.value);renderDash()">
+        <option value="">—</option>
+        <option ${r.status==='Pending'?'selected':''}>Pending</option>
+        <option ${r.status==='Done'?'selected':''}>Done</option>
+        <option ${r.status==='Edit'?'selected':''}>Edit</option>
+        <option ${r.status==='Late'?'selected':''}>Late</option>
+      </select></td>
+      <td><input class="ci" value="${r.note||''}" onchange="upd('${r.id}','note',this.value,${r.d})"></td>
+    </tr>`;
+  }).join('');
+}
+
+function setRowColor(tr, status){
+  tr.classList.remove('rd','rp','rl','re');
+  const map = {Done:'rd', Pending:'rp', Late:'rl', Edit:'re'};
+  if(map[status]) tr.classList.add(map[status]);
+}
+
+function upd(id, field, val, d){
+  let r = rows.find(r=>r.id===id);
+  if(!r) r = ensureRow(curYear, curMonth, d);
+  else if(r._e){ r._e = false; }
+  r[field] = val; saveRows();
+}
+function updDate(id, val, d){
+  let r = rows.find(r=>r.id===id);
+  if(!r) r = ensureRow(curYear, curMonth, d);
+  r.ds = val;
+  if(r.un && r.un !== 'C') r.dd = calcDue(val, r.un);
+  saveRows(); renderSheet();
+}
+function updUN(id, val, d){
+  let r = rows.find(r=>r.id===id);
+  if(!r) r = ensureRow(curYear, curMonth, d);
+  r.un = val;
+  if(val !== 'C' && r.ds) r.dd = calcDue(r.ds, val);
+  saveRows(); renderSheet();
+}
+
+/* ─── DONUT CHART ─── */
+function drawDonut(canvasId, legId, labels, data, colors){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const S = 90;
+  canvas.width = S; canvas.height = S;
+  const ctx = canvas.getContext('2d');
+  const total = data.reduce((a,b)=>a+b, 0);
+  ctx.clearRect(0,0,S,S);
+  if(!total){
+    ctx.beginPath(); ctx.arc(S/2,S/2,38,0,Math.PI*2);
+    ctx.strokeStyle = '#f0f2f5'; ctx.lineWidth = 14; ctx.stroke();
+    document.getElementById(legId).innerHTML = `<p style="font-size:11px;color:var(--mu);">${t('noData')}</p>`;
+    return;
+  }
+  let start = -Math.PI/2;
+  data.forEach((v,i)=>{
+    if(!v) return;
+    const angle = (v/total)*Math.PI*2;
+    ctx.beginPath(); ctx.moveTo(S/2,S/2);
+    ctx.arc(S/2,S/2,42,start,start+angle);
+    ctx.closePath(); ctx.fillStyle = colors[i]; ctx.fill();
+    start += angle;
+  });
+  ctx.beginPath(); ctx.arc(S/2,S/2,28,0,Math.PI*2);
+  ctx.fillStyle = 'white'; ctx.fill();
+  ctx.fillStyle = '#1a1a2e'; ctx.font = 'bold 13px Cairo';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(total, S/2, S/2);
+  document.getElementById(legId).innerHTML = labels.map((l,i)=> data[i] ? `
+    <div class="legrow">
+      <div class="legdot" style="background:${colors[i]};"></div>
+      <span class="legl">${l}</span>
+      <span class="legv" style="color:${colors[i]};">${data[i]}</span>
+    </div>` : '').join('');
+}
+
+/* ─── DASHBOARD ─── */
+const CLR = ['#06d6a0','#f4a61e','#ef476f','#118ab2','#7f77dd','#d85a30','#d4537e','#639922','#ba7517','#0f6e56','#534ab7','#993c1d'];
+
+function renderDash(){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const active = rows.filter(r=>!r._e);
+  const done = active.filter(r=>r.status==='Done');
+  const pending = active.filter(r=>r.status==='Pending').length;
+  const late = active.filter(r=>r.status==='Late'||(r.dd&&new Date(r.dd)<today&&r.status&&r.status!=='Done')).length;
+  const edit = active.filter(r=>r.status==='Edit').length;
+
+  document.getElementById('st0').textContent = active.length;
+  document.getElementById('st1').textContent = done.length;
+  document.getElementById('st2').textContent = pending;
+  document.getElementById('st3').textContent = late;
+  document.getElementById('st4').textContent = edit;
+
+  let rev = 0;
+  done.forEach(r=>{ const p=cfg.products.find(p=>p.name===r.prod); if(p) rev+=p.price; });
+  const expT = cfg.expenses.length ? cfg.expenses.reduce((s,e)=>s+parseFloat(e.amt||0),0) : parseFloat(cfg.expFixed||0);
+  const net = rev - expT;
+  const curr = cfg.curr || 'د.إ';
+
+  document.getElementById('krev').textContent = rev.toLocaleString() + ' ' + curr;
+  document.getElementById('krevs').textContent = done.length + ' ' + t('ordDone');
+  document.getElementById('kexp').textContent = expT.toLocaleString() + ' ' + curr;
+  document.getElementById('knet').textContent = (net>=0?'+':'') + net.toLocaleString() + ' ' + curr;
+  document.getElementById('knet').style.color = net>=0 ? 'var(--b)' : 'var(--r)';
+  document.getElementById('kord').textContent = done.length;
+
+  // Charts
+  drawDonut('donutChart','donutLeg',
+    [t('legDone'),t('legPend'),t('legLate'),t('legEdit')],
+    [done.length, pending, late, edit],
+    ['#06d6a0','#f4a61e','#ef476f','#118ab2']
+  );
+  const pc = {};
+  active.forEach(r=>{ if(r.prod) pc[r.prod]=(pc[r.prod]||0)+1; });
+  const pL = Object.keys(pc);
+  drawDonut('prodChart','prodLeg', pL, pL.map(l=>pc[l]), CLR);
+
+  // Today list
+  const due = active.filter(r=>{
+    if(!r.status||r.status==='Done'||!r.dd) return false;
+    const d=new Date(r.dd); d.setHours(0,0,0,0); return d<=today;
+  });
+  const list = document.getElementById('todList');
+  if(!due.length){ list.innerHTML=`<div class="empty">${t('todEmpty')}</div>`; return; }
+  const cols = t('todCols');
+  list.innerHTML = `<table style="width:100%;border-collapse:collapse;">
+    <thead><tr>${cols.map(h=>`<th style="text-align:right;padding:5px 8px;font-size:10px;color:var(--mu);font-weight:600;">${h}</th>`).join('')}</tr></thead>
+    <tbody>${due.map(r=>{
+      const d=new Date(r.dd); d.setHours(0,0,0,0); const over=d<today;
+      const sc={'Done':'#05a87f','Pending':'#b97d0a','Late':'#c9184a','Edit':'#0277bd'}[r.status]||'#888';
+      return`<tr style="${over?'background:#fff5f7':''}">
+        <td style="padding:5px 8px;font-size:12px;font-weight:600;">${r.aid||'-'}</td>
+        <td style="padding:5px 8px;font-size:12px;">${r.name||'-'}</td>
+        <td style="padding:5px 8px;font-size:11px;color:#555;">${r.prod||'-'}</td>
+        <td style="padding:5px 8px;font-size:11px;color:${over?'var(--r
