@@ -102,8 +102,8 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .mcname{font-size:12px;font-weight:700;color:var(--p);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mcsub{font-size:10px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;max-width:140px;}
 .mcr2{display:flex;align-items:center;gap:3px;font-size:9px;}
-.badge{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;flex-shrink:0;}
-.bd{background:#edfff7;color:#05a87f;}.bp{background:#fffbf0;color:#b97d0a;}.bl{background:#fff0f3;color:#c9184a;}.be{background:#edf4ff;color:#0277bd;}.bn{background:#f0f2f5;color:#bbb;}
+.badge{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;flex-shrink:0;} button.badge{cursor:pointer;font-family:'Cairo',sans-serif;transition:opacity 0.15s;} button.badge:active{opacity:0.7;}
+.bd{background:#edfff7;color:#05a87f;}.bp{background:#fffbf0;color:#b97d0a;}.bl{background:#fff0f3;color:#c9184a;}.be{background:#edf4ff;color:#0277bd;} button.be{background:#edf4ff;color:#0277bd;border:none;}.bn{background:#f0f2f5;color:#bbb;}
 .mca{font-size:9px;color:#ccc;flex-shrink:0;}
 .mcbody{padding:6px 10px 8px;background:#fafbfc;border-top:1px solid #f5f5f5;}
 .mcrow{display:flex;gap:4px;margin-bottom:4px;}
@@ -670,25 +670,28 @@ function renderCards(){
     const bcl=r.status==='Done'?'bd':r.status==='Pending'?'bp':late||r.status==='Late'?'bl':r.status==='Edit'?'be':'bn';
     const unCol=r.un==='U'?'#c9184a':r.un==='N'?'#05a87f':r.un==='C'?'var(--v)':'#bbb';
     const stCol={Done:'#05a87f',Pending:'#b97d0a',Late:'#c9184a',Edit:'#0277bd'}[r.status]||'#bbb';
-    return`<div class="mc" id="mc-${r.id}" style="border-right:3px solid ${BC[rc]||'#e2e8f0'};">
+    return`<div style="display:flex;align-items:flex-start;gap:4px;"><div class="mc" id="mc-${r.id}" style="border-right:3px solid ${BC[rc]||'#e2e8f0'};flex:1;">
   <div class="mch" onclick="toggleCard('${r.id}')">
     <div class="mcr1">
       <div class="mcl">
-        <span class="mcnum" style="cursor:default">${r.d}</span>\n        <span class="mcname">${r.name||'—'}</span>
-        <span class="mcsub">· ${r.aid||'—'}${r.prod?' · '+(isCustom(r.prod)?'✦ ':'')+r.prod:''}${r.phone?' 📱':''}</span>
+        <span class="mcnum">${r.d}</span>
+        <span class="mcname">${r.name||'—'}</span>
+        <span class="mcsub">· ${r.aid||'—'}${r.prod?' · '+(isCustom(r.prod)?'✦ ':'')+r.prod:''}</span>
       </div>
-      <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
-        <span class="badge ${bcl}">${r.status||(r._e?'—':'?')}${late?' ⚠️':''}</span>
-        ${!r._e?`<button onclick="event.stopPropagation();dlInvoice('${r.id}')" style="background:transparent;border:none;cursor:pointer;padding:2px 4px;opacity:0.45;" title="فاتورة"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button><button onclick=\"event.stopPropagation();doWA(\'${r.id}\')\" style=\"background:transparent;border:none;cursor:pointer;padding:2px 4px;opacity:0.45;\" title=\"واتساب\"><svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#25D366\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z\"/></svg></button>`:''}\n        <span class="mca">${isOpen?'▴':'▾'}</span>
+      <div style="display:flex;align-items:center;gap:3px;flex-shrink:0;">
+        ${!r._e?`<button onclick="event.stopPropagation();dlInvoice('${r.id}')" style="background:transparent;border:none;cursor:pointer;padding:2px 3px;line-height:1;" title="فاتورة"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>`:''}
+        ${!r._e?`<button onclick="event.stopPropagation();doWA('${r.id}')" style="background:transparent;border:none;cursor:pointer;padding:2px 3px;line-height:1;" title="واتساب"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></button>`:''}
+        <button onclick="event.stopPropagation();cycleStatus('${r.id}',${r.d})" class="badge ${bcl}" style="cursor:pointer;border:none;font-family:'Cairo',sans-serif;" title="${lang==='ar'?'اضغط لتغيير الحالة':'Tap to change status'}">${r.status||(r._e?'—':'?')}${late?' ⚠️':''}</button>
+        <span class="mca">${isOpen?'▴':'▾'}</span>
       </div>
     </div>
     ${r.ds||r.dd?`<div class="mcr2">
       <span style="color:#aaa;">${lang==='ar'?'طلب':'ord'}</span>
-      <span style="color:${late?'var(--r)':'var(--mu)'};">${r.ds?r.ds.slice(5):'—'}</span>
+      <span style="color:${late?'var(--r)':'var(--mu)'};" data-type="od">${r.ds?r.ds.slice(5):'—'}</span>
       <span style="color:#ddd;">→</span>
       <span style="color:#aaa;">${lang==='ar'?'تسليم':'due'}</span>
-      <span style="font-weight:700;color:${late?'var(--r)':'#333'};">${r.dd?r.dd.slice(5):'—'}</span>
-      <span style="color:#aaa;">${dn}</span>
+      <span style="font-weight:700;color:${late?'var(--r)':'#333'};" data-type="ddisplay">${r.dd?r.dd.slice(5):'—'}</span>
+      <span style="color:#aaa;" data-type="day">${dn}</span>
       <span style="font-weight:700;color:${unCol};margin-right:auto;">${r.un||'—'}</span>
       ${pDisp!=='—'?`<span style="font-size:9px;font-weight:700;color:var(--p);background:#f0f2f5;padding:1px 6px;border-radius:8px;">${pDisp}</span>`:''}
     </div>`:``}
@@ -705,7 +708,7 @@ function renderCards(){
     <div class="mcrow" style="align-items:center;">
       <div class="mf" style="flex:1;"><input type="date" value="${r.ds||''}" style="border:none;background:transparent;font-family:'Cairo',sans-serif;font-size:11px;color:#555;outline:none;width:100%;" onchange="updDate('${r.id}',this.value,${r.d})"></div>
       <span style="font-size:10px;color:#ddd;flex-shrink:0;padding:0 3px;">→</span>
-      <div class="mf" style="flex:1;${isc?'border-color:var(--v);':late?'border-color:var(--r);':''}"><input type="date" value="${r.dd||''}" style="border:none;background:transparent;font-family:'Cairo',sans-serif;font-size:11px;color:${late?'var(--r)':'#555'};outline:none;width:100%;" onchange="upd('${r.id}','dd',this.value,${r.d});renderCards()"></div>
+      <div class="mf" style="flex:1;${isc?'border-color:var(--v);':late?'border-color:var(--r);':''}"><input type="date" value="${r.dd||''}" data-type="dd" style="border:none;background:transparent;font-family:'Cairo',sans-serif;font-size:11px;color:${late?'var(--r)':'#555'};outline:none;width:100%;" onchange="upd('${r.id}','dd',this.value,${r.d});renderCards()"></div>
     </div>
     <div class="mcrow">
       <div class="mf ps" style="flex:1;"><select style="border:none;background:transparent;font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;color:${stCol};outline:none;width:100%;" onchange="upd('${r.id}','status',this.value,${r.d});renderCards();renderDash()"><option value="">—</option><option${r.status==='Pending'?' selected':''}>Pending</option><option${r.status==='Done'?' selected':''}>Done</option><option${r.status==='Edit'?' selected':''}>Edit</option><option${r.status==='Late'?' selected':''}>Late</option></select></div>
@@ -720,9 +723,13 @@ function renderCards(){
       <button class="actbtn wa" onclick="event.stopPropagation();doWA('${r.id}')">\n        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
         واتساب
       </button>
+      <button onclick="event.stopPropagation();deleteRow('${r.id}')" style="margin-right:auto;background:transparent;border:1.5px solid #ffd0d8;color:var(--r);border-radius:8px;padding:5px 10px;font-family:'Cairo',sans-serif;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:4px;touch-action:manipulation;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        ${lang==='ar'?'حذف':'Delete'}
+      </button>
     </div>`:''}
   </div>`:``}
-</div>`;
+</div><button onclick="addRowSameDay(${r.y},${r.m},${r.d})" style="flex-shrink:0;width:22px;height:22px;background:var(--w);border:1.5px solid #e2e8f0;border-radius:50%;color:#a0aec0;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:8px;touch-action:manipulation;line-height:1;" title="إضافة طلب بنفس اليوم">+</button></div>`;
   }).join('');
 }
 function addRowSameDay(y,m,d){
@@ -737,12 +744,136 @@ function addRowSameDay(y,m,d){
   renderCards();
   setTimeout(()=>{const el=document.getElementById('mc-'+newId);if(el)el.scrollIntoView({block:'nearest',behavior:'smooth'});},80);
 }
+function deleteRow(id){
+  if(!confirm(lang==='ar'?'حذف هذا الطلب؟':'Delete this order?'))return;
+  const idx=rows.findIndex(r=>r.id===id);
+  if(idx>=0){rows.splice(idx,1);saveR();}
+  delete expanded[id];
+  renderCards();renderDash();
+}
+function cycleStatus(id,d){
+  let r=rows.find(r=>r.id===id);
+  if(!r)r=ensureRow(curYear,curMonth,d);
+  const cycle=['Pending','Done','Late','Edit'];
+  const cur=r.status||'Pending';
+  const next=cycle[(cycle.indexOf(cur)+1)%cycle.length];
+  r.status=next;
+  r._e=false;
+  saveR();
+  renderCards();
+  renderDash();
+}
 function toggleCard(id){expanded[id]=!expanded[id];renderCards();setTimeout(()=>{const el=document.getElementById('mc-'+id);if(el)el.scrollIntoView({block:'nearest',behavior:'smooth'});},60);}
 
 // ── DATA OPS ──
 function upd(id,f,v,d){let r=rows.find(r=>r.id===id);if(!r)r=ensureRow(curYear,curMonth,d);else if(r._e)r._e=false;r[f]=v;saveR();}
-function updDate(id,v,d){let r=rows.find(r=>r.id===id);if(!r)r=ensureRow(curYear,curMonth,d);r.ds=v;if(r.un&&r.un!=='C')r.dd=calcDue(v,r.un);saveR();renderCards();}
-function updUN(id,v,d){let r=rows.find(r=>r.id===id);if(!r)r=ensureRow(curYear,curMonth,d);r.un=v;if(v!=='C'&&r.ds)r.dd=calcDue(r.ds,v);saveR();renderCards();}
+function updDate(id,v,d){
+  let r=rows.find(r=>r.id===id);
+  if(!r)r=ensureRow(curYear,curMonth,d);
+  if(r._e){r._e=false;}
+  r.ds=v;
+  // Default UN to N if not set
+  if(!r.un)r.un='N';
+  if(r.un!=='C'&&v){
+    r.dd=calcDue(v,r.un);
+    saveR();
+    // Update DOM directly
+    const ddInp=document.querySelector('#mc-'+id+' input[data-type="dd"]');
+    if(ddInp)ddInp.value=r.dd;
+    const days=t('days');
+    const daySpan=document.querySelector('#mc-'+id+' [data-type="day"]');
+    if(daySpan)daySpan.textContent=r.dd?days[new Date(r.dd).getDay()]:'';
+    const ddSpan=document.querySelector('#mc-'+id+' [data-type="ddisplay"]');
+    if(ddSpan)ddSpan.textContent=r.dd?r.dd.slice(5):'';
+    const odSpan=document.querySelector('#mc-'+id+' [data-type="od"]');
+    if(odSpan)odSpan.textContent=v?v.slice(5):'';
+  } else {
+    saveR();
+  }
+}
+
+function updUN(id,v,d){
+  let r=rows.find(r=>r.id===id);
+  if(!r)r=ensureRow(curYear,curMonth,d);
+  r.un=v;
+  if(v!=='C'&&r.ds){
+    r.dd=calcDue(r.ds,v);
+    saveR();
+    const days=t('days');
+    const ddInp=document.querySelector('#mc-'+id+' input[data-type="dd"]');
+    if(ddInp)ddInp.value=r.dd;
+    const daySpan=document.querySelector('#mc-'+id+' [data-type="day"]');
+    if(daySpan)daySpan.textContent=r.dd?days[new Date(r.dd).getDay()]:'';
+    const ddSpan=document.querySelector('#mc-'+id+' [data-type="ddisplay"]');
+    if(ddSpan)ddSpan.textContent=r.dd?r.dd.slice(5):'';
+  } else {
+    saveR();
+  }
+}
+
+
+// ── DONUT CHARTS ──
+const CLR=['#06d6a0','#f4a61e','#ef476f','#118ab2','#7f77dd','#d85a30','#d4537e','#639922'];
+function donut(cid,lid,labels,data,colors){
+  const cv=document.getElementById(cid);if(!cv)return;
+  const S=80,ctx=cv.getContext('2d'),total=data.reduce((a,b)=>a+b,0);
+  cv.width=S;cv.height=S;ctx.clearRect(0,0,S,S);
+  if(!total){ctx.beginPath();ctx.arc(S/2,S/2,34,0,Math.PI*2);ctx.strokeStyle='#f0f2f5';ctx.lineWidth=12;ctx.stroke();const el=document.getElementById(lid);if(el)el.innerHTML='<p style="font-size:11px;color:var(--mu);">لا توجد بيانات</p>';return;}
+  let start=-Math.PI/2;
+  data.forEach((v,i)=>{if(!v)return;const a=(v/total)*Math.PI*2;ctx.beginPath();ctx.moveTo(S/2,S/2);ctx.arc(S/2,S/2,37,start,start+a);ctx.closePath();ctx.fillStyle=colors[i];ctx.fill();start+=a;});
+  ctx.beginPath();ctx.arc(S/2,S/2,24,0,Math.PI*2);ctx.fillStyle='white';ctx.fill();
+  ctx.fillStyle='#1a1a2e';ctx.font='bold 12px Cairo';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(total,S/2,S/2);
+  const el=document.getElementById(lid);
+  if(el)el.innerHTML=labels.map((l,i)=>data[i]?`<div class="legr"><div class="legd" style="background:${colors[i]};"></div><span class="legl">${l}</span><span class="legv" style="color:${colors[i]};">${data[i]}</span></div>`:'').join('');
+}
+
+// ── DASHBOARD ──
+function renderDash(){
+  const today=new Date();today.setHours(0,0,0,0);
+  let active=rows.filter(r=>!r._e);
+  if(dashMonth!==-1)active=active.filter(r=>r.m===dashMonth);
+  const done=active.filter(r=>r.status==='Done');
+  const pend=active.filter(r=>r.status==='Pending').length;
+  const late=active.filter(r=>r.status==='Late'||(r.dd&&new Date(r.dd)<today&&r.status&&r.status!=='Done')).length;
+  const edit=active.filter(r=>r.status==='Edit').length;
+  const el=(id)=>document.getElementById(id);
+  if(el('st0'))el('st0').textContent=done.length;
+  if(el('st1'))el('st1').textContent=pend;
+  if(el('st2'))el('st2').textContent=late;
+  if(el('st3'))el('st3').textContent=edit;
+  let rev=0;done.forEach(r=>{rev+=getPrice(r);});
+  const expT=cfg.expenses.length?cfg.expenses.reduce((s,e)=>s+parseFloat(e.amt||0),0):parseFloat(cfg.expFixed||0);
+  const net=rev-expT,curr=cfg.curr||'د.إ';
+  if(el('krev'))el('krev').textContent=rev.toLocaleString()+' '+curr;
+  if(el('krevs'))el('krevs').textContent=done.length+' '+t('ordDone');
+  if(el('kexp'))el('kexp').textContent=expT.toLocaleString()+' '+curr;
+  if(el('knet')){el('knet').textContent=(net>=0?'+':'')+net.toLocaleString()+' '+curr;el('knet').style.color=net>=0?'var(--b)':'var(--r)';}
+  if(el('kord'))el('kord').textContent=done.length;
+  const leg=t('leg');
+  donut('c1','l1',leg,[done.length,pend,late,edit],['#06d6a0','#f4a61e','#ef476f','#118ab2']);
+  const pc={};active.forEach(r=>{if(r.prod)pc[r.prod]=(pc[r.prod]||0)+1;});
+  const pl=Object.keys(pc);donut('c2','l2',pl,pl.map(l=>pc[l]),CLR);
+  // Week bars
+  const days=t('days');const hols=cfg.hol||[5,6];
+  const sat=new Date(today);const dow=sat.getDay();sat.setDate(sat.getDate()+((6-dow+7)%7||7));
+  const wkDays=[];for(let i=0;i<7;i++){const d=new Date(sat);d.setDate(d.getDate()+i);wkDays.push(d);}
+  const counts=wkDays.map(d=>rows.filter(r=>r.dd&&r.dd===d.toISOString().split('T')[0]&&!r._e).length);
+  const maxC=Math.max(...counts,1);const wkTot=counts.reduce((a,b)=>a+b,0);
+  if(el('wkrange'))el('wkrange').textContent=wkDays[0].getDate()+'/'+(wkDays[0].getMonth()+1)+' — '+wkDays[6].getDate()+'/'+(wkDays[6].getMonth()+1);
+  if(el('wktot'))el('wktot').textContent=wkTot+(lang==='ar'?' طلب':' orders');
+  const barCols=['#1a1a2e','#06d6a0','#118ab2','#f4a61e','#ef476f','#7f77dd','#bbb'];
+  if(el('wkbars'))el('wkbars').innerHTML=wkDays.map((d,i)=>{
+    const isH=hols.includes(d.getDay());const cnt=counts[i];const dn=days[d.getDay()].substring(0,3);
+    const h=isH?100:cnt?Math.max(15,Math.round((cnt/maxC)*100)):5;const col=isH?'#f0f2f5':barCols[i%barCols.length];
+    return '<div class="bcol">'+(cnt&&!isH?'<span class="bnum" style="color:'+col+';">'+cnt+'</span>':'')+'<div class="binn">'+(isH?'<div class="bhol">🌙</div>':'<div class="bfill" style="height:'+h+'%;background:'+col+';"></div>')+'</div><span class="blbl" style="'+(isH?'color:#c0c8d4;font-size:8px;':'')+'">'+dn+'</span></div>';
+  }).join('');
+  // Today list
+  const due=rows.filter(r=>!r._e&&r.status&&r.status!=='Done'&&r.dd&&new Date(r.dd)<=today);
+  const list=el('todlist');if(!list)return;
+  if(!due.length){list.innerHTML='<div class="empty">'+t('todEmpty')+'</div>';renderNotif();return;}
+  list.innerHTML='<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;min-width:400px;"><thead><tr><th style="text-align:right;padding:5px 8px;font-size:10px;color:var(--mu);">Account ID</th><th style="text-align:right;padding:5px 8px;font-size:10px;color:var(--mu);">'+t('thname')+'</th><th style="text-align:right;padding:5px 8px;font-size:10px;color:var(--mu);">'+t('thprod')+'</th><th style="text-align:right;padding:5px 8px;font-size:10px;color:var(--mu);">'+t('thprice')+'</th><th style="text-align:right;padding:5px 8px;font-size:10px;color:var(--mu);">'+t('thdue')+'</th><th style="text-align:right;padding:5px 8px;font-size:10px;color:var(--mu);">'+t('thstat')+'</th></tr></thead><tbody>'+due.map(r=>{const ov=new Date(r.dd)<today;const sc={Done:'#05a87f',Pending:'#b97d0a',Late:'#c9184a',Edit:'#0277bd'}[r.status]||'#888';const pr=getPrice(r);return'<tr style="'+(ov?'background:#fff5f7':'')+'"><td style="padding:5px 8px;font-size:12px;font-weight:600;">'+(r.aid||'-')+'</td><td style="padding:5px 8px;font-size:12px;">'+(r.name||'-')+'</td><td style="padding:5px 8px;font-size:11px;">'+(r.prod||'-')+'</td><td style="padding:5px 8px;font-size:11px;font-weight:700;color:var(--p);">'+(pr?pr+' '+curr:'-')+'</td><td style="padding:5px 8px;font-size:11px;color:'+(ov?'var(--r)':'var(--mu)')+';">'+(r.dd||'-')+(ov?' ⚠️':'')+'</td><td style="padding:5px 8px;font-size:11px;font-weight:700;color:'+sc+';">'+(r.status||'-')+'</td></tr>';}).join('')+'</tbody></table></div>';
+  renderNotif();
+}
 
 // ── INVOICE PDF ──
 function dlInvoice(id){
@@ -753,7 +884,9 @@ function dlInvoice(id){
   const price=getPrice(r);
   const storeName=cfg.store||'وازن';
   const logoHTML=cfg.logo?`<img src="${cfg.logo}" style="width:48px;height:48px;object-fit:contain;border-radius:8px;" alt="logo">`:`<div style="width:48px;height:48px;background:rgba(255,255,255,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;">${svgLogo('#fff')}</div>`;
-  const html=`<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Almarai:wght@800&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Cairo',sans-serif;background:#f0f2f5;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+  const html=`<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Almarai:wght@800&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Cairo',sans-serif;background:#f0f2f5;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
 .inv{background:white;border-radius:16px;max-width:520px;width:100%;overflow:hidden;position:relative;}
 .wm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0.04;z-index:0;}
 .body{position:relative;z-index:1;}
@@ -772,117 +905,49 @@ function dlInvoice(id){
 <div class="body">
 <div class="hdr">
   <div style="display:flex;align-items:center;gap:12px;">${logoHTML}<div><div style="font-family:'Almarai',sans-serif;font-size:18px;font-weight:800;color:white;">${storeName}</div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;">${lang==='ar'?'نظام متابعة الطلبات':'Order Management'}</div></div></div>
-  <div style="text-align:left;"><div style="font-size:10px;color:rgba(255,255,255,0.4);">${t('invTitle')}</div><div style="font-family:'Almarai',sans-serif;font-size:20px;color:#06d6a0;font-weight:800;">#${num}</div><div style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:1px;">${fmtDate(r.ds)}</div></div>
+  <div style="text-align:left;"><div style="font-size:10px;color:rgba(255,255,255,0.4);">فاتورة</div><div style="font-family:'Almarai',sans-serif;font-size:20px;color:#06d6a0;font-weight:800;">#${num}</div><div style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:1px;">${fmtDate(r.ds)}</div></div>
 </div>
 <div class="cont">
   <div class="row2">
-    <div><div class="lbl">${t('invClient')}</div><div class="val">${r.name||'—'}</div>${r.aid?`<div class="sub">${r.aid}</div>`:''}</div>
-    <div style="text-align:left;"><div class="lbl">${t('invDate')}</div><div class="val">${fmtDate(r.ds)}</div><div class="sub">${t('invIssue')}</div></div>
+    <div><div class="lbl">العميل</div><div class="val">${r.name||'—'}</div>${r.aid?`<div class="sub">${r.aid}</div>`:''}</div>
+    <div style="text-align:left;"><div class="lbl">التاريخ</div><div class="val">${fmtDate(r.ds)}</div></div>
   </div>
-  <div style="font-size:10px;color:#a0aec0;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">${t('invDetails')}</div>
+  <div style="font-size:10px;color:#a0aec0;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">تفاصيل الطلب</div>
   <div class="prow">
-    <div><div style="font-size:13px;font-weight:700;color:#1a1a2e;">${r.prod||'—'}</div><div style="font-size:11px;color:#718096;margin-top:2px;">${lang==='ar'?'طلب رقم':'Order #'}${num}</div></div>
+    <div><div style="font-size:13px;font-weight:700;color:#1a1a2e;">${r.prod||'—'}</div><div style="font-size:11px;color:#718096;margin-top:2px;">طلب رقم #${num}</div></div>
     <div style="font-family:'Almarai',sans-serif;font-size:20px;font-weight:800;color:#1a1a2e;">${price} ${curr}</div>
   </div>
-  <div class="tot"><span style="font-size:13px;color:rgba(255,255,255,0.6);">${t('invTotal')}</span><span style="font-family:'Almarai',sans-serif;font-size:24px;font-weight:800;color:#06d6a0;">${price} ${curr}</span></div>
+  <div class="tot"><span style="font-size:13px;color:rgba(255,255,255,0.6);">الإجمالي</span><span style="font-family:'Almarai',sans-serif;font-size:24px;font-weight:800;color:#06d6a0;">${price} ${curr}</span></div>
 </div>
-<div class="ftr"><span style="font-size:10px;color:#c0c8d4;">${t('invFooter')}</span><span style="font-size:10px;color:#c0c8d4;">wazen</span></div>
+<div class="ftr"><span style="font-size:10px;color:#c0c8d4;">شكراً لثقتكم 🤍</span><span style="font-size:10px;color:#c0c8d4;">wazen.app</span></div>
 </div></div><script>window.onload=()=>window.print();<\/script></body></html>`;
-  // Open invoice in new window
-  const w = window.open('', '_blank');
-  if(w){ w.document.open(); w.document.write(html); w.document.close(); }
-  else { alert(lang==='ar'?'افتح النافذة المنبثقة في المتصفح':'Allow popups in browser'); }
+  const w=window.open('','_blank');
+  if(w){w.document.open();w.document.write(html);w.document.close();}
+  else{alert('افتح النوافذ المنبثقة في المتصفح');}
 }
+
+function svgLogo(col,size=22){return `<svg width="${size}" height="${size}" viewBox="0 0 36 38" fill="none"><rect x="2" y="2" width="32" height="4.5" rx="2.25" fill="${col}"/><rect x="2" y="10" width="24" height="4.5" rx="2.25" fill="${col}"/><rect x="8" y="18" width="26" height="4.5" rx="2.25" fill="${col}"/><circle cx="18" cy="32" r="4" fill="${col==='#fff'?'#06d6a0':col}"/></svg>`;}
+
 function doWA(id){
   const r=rows.find(r=>r.id===id);if(!r)return;
   const curr=cfg.curr||'د.إ';
   const price=getPrice(r);
   const store=cfg.store||'وازن';
-  const msg=`🧾 *${store}*
-
-` +
-    `👤 ${r.name||'—'} (${r.aid||'—'})
-` +
-    `📦 ${r.prod||'—'}
-` +
-    `💰 ${price?price+' '+curr:'—'}
-` +
-    `📅 ${lang==='ar'?'تاريخ الطلب':'Order date'}: ${r.ds||'—'}
-` +
-    `🚀 ${lang==='ar'?'موعد التسليم':'Due date'}: ${r.dd||'—'}
-` +
-    `
-${lang==='ar'?'شكراً لثقتكم 🤍':'Thank you 🤍'}`;
+  const msg='🧾 *'+store+'*\n\n'
+    +'👤 '+(r.name||'—')+' ('+(r.aid||'—')+')\n'
+    +'📦 '+(r.prod||'—')+'\n'
+    +'💰 '+(price?price+' '+curr:'—')+'\n'
+    +'📅 تاريخ الطلب: '+(r.ds||'—')+'\n'
+    +'🚀 موعد التسليم: '+(r.dd||'—')+'\n'
+    +'\nشكراً لثقتكم 🤍';
   const cc=(r.cc||'+971').replace('+','');
   const phone=(r.phone||'').replace(/[^0-9]/g,'');
   const fullPhone=phone?cc+phone:'';
-  const url='https://wa.me/'+(fullPhone||'')+"?text="+encodeURIComponent(msg);
-  const a2=document.createElement('a');a2.href=url;a2.target='_blank';document.body.appendChild(a2);a2.click();setTimeout(()=>document.body.removeChild(a2),100);
+  const url='https://wa.me/'+(fullPhone||'')+'?text='+encodeURIComponent(msg);
+  const a=document.createElement('a');a.href=url;a.target='_blank';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>document.body.removeChild(a),100);
 }
 
-function svgLogo(col,size=22){return`<svg width="${size}" height="${size}" viewBox="0 0 36 38" fill="none"><rect x="2" y="2" width="32" height="4.5" rx="2.25" fill="${col}"/><rect x="2" y="10" width="24" height="4.5" rx="2.25" fill="${col}"/><rect x="8" y="18" width="26" height="4.5" rx="2.25" fill="${col}"/><circle cx="18" cy="32" r="4" fill="${col==='#fff'?'#06d6a0':col}"/></svg>`;}
-
-// ── DONUT ──
-const CLR=['#06d6a0','#f4a61e','#ef476f','#118ab2','#7f77dd','#d85a30','#d4537e','#639922'];
-function donut(cid,lid,labels,data,colors){
-  const cv=document.getElementById(cid);if(!cv)return;
-  const S=80,ctx=cv.getContext('2d'),total=data.reduce((a,b)=>a+b,0);
-  cv.width=S;cv.height=S;ctx.clearRect(0,0,S,S);
-  if(!total){ctx.beginPath();ctx.arc(S/2,S/2,34,0,Math.PI*2);ctx.strokeStyle='#f0f2f5';ctx.lineWidth=12;ctx.stroke();document.getElementById(lid).innerHTML=`<p style="font-size:11px;color:var(--mu);">${t('nodata')}</p>`;return;}
-  let start=-Math.PI/2;
-  data.forEach((v,i)=>{if(!v)return;const a=(v/total)*Math.PI*2;ctx.beginPath();ctx.moveTo(S/2,S/2);ctx.arc(S/2,S/2,37,start,start+a);ctx.closePath();ctx.fillStyle=colors[i];ctx.fill();start+=a;});
-  ctx.beginPath();ctx.arc(S/2,S/2,24,0,Math.PI*2);ctx.fillStyle='white';ctx.fill();
-  ctx.fillStyle='#1a1a2e';ctx.font='bold 12px Cairo';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(total,S/2,S/2);
-  document.getElementById(lid).innerHTML=labels.map((l,i)=>data[i]?`<div class="legr"><div class="legd" style="background:${colors[i]};"></div><span class="legl">${l}</span><span class="legv" style="color:${colors[i]};">${data[i]}</span></div>`:'').join('');
-}
-
-// ── DASHBOARD ──
-function renderDash(){
-  const today=new Date();today.setHours(0,0,0,0);
-  let active=rows.filter(r=>!r._e);
-  if(dashMonth!==-1)active=active.filter(r=>r.m===dashMonth);
-  const done=active.filter(r=>r.status==='Done');
-  const pend=active.filter(r=>r.status==='Pending').length;
-  const late=active.filter(r=>r.status==='Late'||(r.dd&&new Date(r.dd)<today&&r.status&&r.status!=='Done')).length;
-  const edit=active.filter(r=>r.status==='Edit').length;
-  document.getElementById('st0').textContent=done.length;
-  document.getElementById('st1').textContent=pend;
-  document.getElementById('st2').textContent=late;
-  document.getElementById('st3').textContent=edit;
-  let rev=0;done.forEach(r=>{rev+=getPrice(r);});
-  const expT=cfg.expenses.length?cfg.expenses.reduce((s,e)=>s+parseFloat(e.amt||0),0):parseFloat(cfg.expFixed||0);
-  const net=rev-expT,curr=cfg.curr||'د.إ';
-  document.getElementById('krev').textContent=rev.toLocaleString()+' '+curr;
-  document.getElementById('krevs').textContent=done.length+' '+t('ordDone');
-  document.getElementById('kexp').textContent=expT.toLocaleString()+' '+curr;
-  document.getElementById('knet').textContent=(net>=0?'+':'')+net.toLocaleString()+' '+curr;
-  document.getElementById('knet').style.color=net>=0?'var(--b)':'var(--r)';
-  document.getElementById('kord').textContent=done.length;
-  const leg=t('leg');
-  donut('c1','l1',leg,[done.length,pend,late,edit],['#06d6a0','#f4a61e','#ef476f','#118ab2']);
-  const pc={};active.forEach(r=>{if(r.prod)pc[r.prod]=(pc[r.prod]||0)+1;});
-  const pl=Object.keys(pc);donut('c2','l2',pl,pl.map(l=>pc[l]),CLR);
-  // Week bars
-  const days=t('days');const hols=cfg.hol||[5,6];
-  const sat=new Date(today);const dow=sat.getDay();sat.setDate(sat.getDate()+((6-dow+7)%7||7));
-  const wkDays=[];for(let i=0;i<7;i++){const d=new Date(sat);d.setDate(d.getDate()+i);wkDays.push(d);}
-  const counts=wkDays.map(d=>rows.filter(r=>r.dd&&r.dd===d.toISOString().split('T')[0]&&!r._e).length);
-  const maxC=Math.max(...counts,1);const wkTot=counts.reduce((a,b)=>a+b,0);
-  document.getElementById('wkrange').textContent=`${wkDays[0].getDate()}/${wkDays[0].getMonth()+1} — ${wkDays[6].getDate()}/${wkDays[6].getMonth()+1}`;
-  document.getElementById('wktot').textContent=wkTot+' '+(lang==='ar'?'طلب':'orders');
-  const barCols=['#1a1a2e','#06d6a0','#118ab2','#f4a61e','#ef476f','#7f77dd','#bbb'];
-  document.getElementById('wkbars').innerHTML=wkDays.map((d,i)=>{
-    const isH=hols.includes(d.getDay());const cnt=counts[i];const dn=days[d.getDay()].substring(0,3);
-    const h=isH?100:cnt?Math.max(15,Math.round((cnt/maxC)*100)):5;const col=isH?'#f0f2f5':barCols[i%barCols.length];
-    return`<div class="bcol">${!isH?`<span class="bnum" style="color:${col};">${cnt||''}</span>`:''}<div class="binn">${isH?`<div class="bhol">🌙</div>`:`<div class="bfill" style="height:${h}%;background:${col};"></div>`}</div><span class="blbl" style="${isH?'color:#c0c8d4;font-size:8px;':''}">${dn}</span></div>`;
-  }).join('');
-  // Today
-  const due=rows.filter(r=>!r._e&&r.status&&r.status!=='Done'&&r.dd&&new Date(r.dd)<=today);
-  const list=document.getElementById('todlist');
-  if(!due.length){list.innerHTML=`<div class="empty">${t('todEmpty')}</div>`;renderNotif();return;}
-  const cols=t('todcols');
-  list.innerHTML=`<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;min-width:400px;"><thead><tr>${cols.map(h=>`<th style="text-align:right;padding:5px 8px;font-size:10px;color:var(--mu);font-weight:600;">${h}</th>`).join('')}</tr></thead><tbody>${due.map(r=>{const ov=new Date(r.dd)<today;const sc={Done:'#05a87f',Pending:'#b97d0a',Late:'#c9184a',Edit:'#0277bd'}[r.status]||'#888';const pr=getPrice(r);return`<tr style="${ov?'background:#fff5f7':''}"><td style="padding:5px 8px;font-size:12px;font-weight:600;">${r.aid||'-'}</td><td style="padding:5px 8px;font-size:12px;">${r.name||'-'}</td><td style="padding:5px 8px;font-size:11px;">${r.prod||'-'}</td><td style="padding:5px 8px;font-size:11px;font-weight:700;color:var(--p);">${pr?pr+' '+(cfg.curr||'د.إ'):'-'}</td><td style="padding:5px 8px;font-size:11px;color:${ov?'var(--r)':'var(--mu)'};">${r.dd}${ov?' ⚠️':''}</td><td style="padding:5px 8px;font-size:11px;font-weight:700;color:${sc};">${r.status}</td></tr>`;}).join('')}</tbody></table></div>`;
-  renderNotif();
-}
 </script>
 </body></html>
