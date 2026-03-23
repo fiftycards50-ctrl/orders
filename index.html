@@ -117,7 +117,10 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .mcpricelbl{font-size:10px;color:var(--v);white-space:nowrap;}
 .mcpriceinp{flex:1;border:none;background:transparent;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;color:#534ab7;outline:none;min-width:0;}
 .mcpricecur{font-size:10px;color:var(--v);flex-shrink:0;}
-.invbtn{display:flex;align-items:center;gap:4px;background:#1a1a2e;color:white;border:none;border-radius:5px;padding:4px 9px;font-family:'Cairo',sans-serif;font-size:10px;cursor:pointer;touch-action:manipulation;margin-top:6px;width:fit-content;}
+.actbtn{display:flex;align-items:center;gap:5px;border:1.5px solid;border-radius:8px;padding:6px 12px;font-family:'Cairo',sans-serif;font-size:11px;cursor:pointer;touch-action:manipulation;background:transparent;font-weight:600;}
+.actbtn:active{opacity:0.7;}
+.actbtn.inv{border-color:#1a1a2e;color:#1a1a2e;}
+.actbtn.wa{border-color:#25D366;color:#25D366;}
 /* SETTINGS */
 .sect{font-size:14px;font-weight:700;color:var(--p);margin:0 0 10px;}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
@@ -428,12 +431,19 @@ function getDays(y,m){return new Date(y,m+1,0).getDate();}
 function pad2(n){return String(n).padStart(2,'0');}
 function fmtDate(ds){if(!ds)return'—';const p=ds.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
 function getMonthRows(y,m){
-  const n=getDays(y,m),ex={};
-  rows.forEach(r=>{if(r.y===y&&r.m===m)ex[r.d]=r;});
+  const n=getDays(y,m),exMain={},exSub=[];
+  rows.forEach(r=>{
+    if(r.y===y&&r.m===m){
+      if(!r.sub||r.sub===0)exMain[r.d]=r;
+      else exSub.push(r);
+    }
+  });
   const res=[];
   for(let d=1;d<=n;d++){
-    if(ex[d])res.push(ex[d]);
-    else{const ds=`${y}-${pad2(m+1)}-${pad2(d)}`;res.push({id:`${y}-${m}-${d}`,y,m,d,ds,aid:'',name:'',prod:'',price:'',phone:'',un:'',dd:'',status:'',note:'',_e:true});}
+    if(exMain[d])res.push(exMain[d]);
+    else{const ds=`${y}-${pad2(m+1)}-${pad2(d)}`;res.push({id:`${y}-${m}-${d}`,y,m,d,ds,aid:'',name:'',prod:'',price:'',phone:'',cc:'+971',un:'',dd:'',status:'',note:'',_e:true,sub:0});}
+    // Add sub rows for same day
+    exSub.filter(r=>r.d===d).sort((a,b)=>a.sub-b.sub).forEach(r=>res.push(r));
   }
   return res;
 }
@@ -664,14 +674,12 @@ function renderCards(){
   <div class="mch" onclick="toggleCard('${r.id}')">
     <div class="mcr1">
       <div class="mcl">
-        <span class="mcnum">${r.d}</span>
-        <span class="mcname">${r.name||'—'}</span>
+        <span class="mcnum" style="cursor:default">${r.d}</span>\n        <span class="mcname">${r.name||'—'}</span>
         <span class="mcsub">· ${r.aid||'—'}${r.prod?' · '+(isCustom(r.prod)?'✦ ':'')+r.prod:''}${r.phone?' 📱':''}</span>
       </div>
       <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
         <span class="badge ${bcl}">${r.status||(r._e?'—':'?')}${late?' ⚠️':''}</span>
-        ${!r._e?`<button onclick="event.stopPropagation();genInvoice('${r.id}')" style="background:transparent;border:none;cursor:pointer;padding:2px;opacity:0.5;" title="${lang==='ar'?'فاتورة':'Invoice'}">🧾</button>`:''}
-        <span class="mca">${isOpen?'▴':'▾'}</span>
+        ${!r._e?`<button onclick="event.stopPropagation();dlInvoice('${r.id}')" style="background:transparent;border:none;cursor:pointer;padding:2px 4px;opacity:0.45;" title="فاتورة"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button><button onclick=\"event.stopPropagation();doWA(\'${r.id}\')\" style=\"background:transparent;border:none;cursor:pointer;padding:2px 4px;opacity:0.45;\" title=\"واتساب\"><svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#25D366\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z\"/></svg></button>`:''}\n        <span class="mca">${isOpen?'▴':'▾'}</span>
       </div>
     </div>
     ${r.ds||r.dd?`<div class="mcr2">
@@ -703,12 +711,31 @@ function renderCards(){
       <div class="mf ps" style="flex:1;"><select style="border:none;background:transparent;font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;color:${stCol};outline:none;width:100%;" onchange="upd('${r.id}','status',this.value,${r.d});renderCards();renderDash()"><option value="">—</option><option${r.status==='Pending'?' selected':''}>Pending</option><option${r.status==='Done'?' selected':''}>Done</option><option${r.status==='Edit'?' selected':''}>Edit</option><option${r.status==='Late'?' selected':''}>Late</option></select></div>
       <input class="mf" style="flex:1.5;" placeholder="${lang==='ar'?'ملاحظة':'Note'}" value="${r.note||''}" onchange="upd('${r.id}','note',this.value,${r.d})">
     </div>
-    <div class="mcrow"><div class="mf" style="flex:1;gap:4px;"><span style="font-size:10px;color:#a0aec0;flex-shrink:0;">📱</span><input class="mfi" type="tel" placeholder="${lang==='ar'?'رقم واتساب':'WhatsApp number'}" value="${r.phone||''}" onchange="upd('${r.id}','phone',this.value,${r.d})"></div></div>
+    <div class="mcrow"><div class="mf" style="flex:1;gap:0;padding:0;overflow:hidden;"><select style="border:none;background:#f7f9fc;font-family:'Cairo',sans-serif;font-size:11px;color:#555;outline:none;padding:4px 4px;border-left:1px solid #e8ecf0;height:100%;flex-shrink:0;" onchange="upd('${r.id}','cc',this.value,${r.d})"><option value="+971" ${(r.cc||'+971')==='+971'?'selected':''}>🇦🇪 +971</option><option value="+966" ${r.cc==='+966'?'selected':''}>🇸🇦 +966</option><option value="+965" ${r.cc==='+965'?'selected':''}>🇰🇼 +965</option><option value="+974" ${r.cc==='+974'?'selected':''}>🇶🇦 +974</option><option value="+973" ${r.cc==='+973'?'selected':''}>🇧🇭 +973</option><option value="+968" ${r.cc==='+968'?'selected':''}>🇴🇲 +968</option><option value="+962" ${r.cc==='+962'?'selected':''}>🇯🇴 +962</option><option value="+963" ${r.cc==='+963'?'selected':''}>🇸🇾 +963</option><option value="+961" ${r.cc==='+961'?'selected':''}>🇱🇧 +961</option><option value="+970" ${r.cc==='+970'?'selected':''}>🇵🇸 +970</option><option value="+20" ${r.cc==='+20'?'selected':''}>🇪🇬 +20</option><option value="+212" ${r.cc==='+212'?'selected':''}>🇲🇦 +212</option></select><input class="mfi" type="tel" placeholder="${lang==='ar'?'رقم الواتساب':'WhatsApp number'}" value="${r.phone||''}" style="padding:4px 7px;min-width:0;" onchange="upd('${r.id}','phone',this.value,${r.d})"></div></div>
     ${iscp?`<div class="mcprice"><span class="mcpricelbl">✦ ${lang==='ar'?'السعر':'Price'}</span><input class="mcpriceinp" type="number" placeholder="0" value="${r.price||''}" onchange="upd('${r.id}','price',this.value,${r.d});renderDash()"><span class="mcpricecur">${cfg.curr||'د.إ'}</span></div>`:''}
-    ${!r._e?`<div style='display:flex;gap:6px;margin-top:6px;'><button class='invbtn' onclick='genInvoice("'+r.id+'")'>🧾 فاتورة</button><button class='invbtn' style='background:#25D366' onclick='sendWA("'+r.id+'")'>💬 واتساب</button></div>`:''}
+    ${!r._e?`<div style="display:flex;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid #f0f2f5;">
+      <button class="actbtn inv" onclick="event.stopPropagation();dlInvoice('${r.id}')">\n        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        ${lang==='ar'?'فاتورة':'Invoice'}
+      </button>
+      <button class="actbtn wa" onclick="event.stopPropagation();doWA('${r.id}')">\n        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+        واتساب
+      </button>
+    </div>`:''}
   </div>`:``}
 </div>`;
   }).join('');
+}
+function addRowSameDay(y,m,d){
+  // Find next available sub-id for same day
+  const existing = rows.filter(r=>r.y===y&&r.m===m&&r.d===d);
+  const subId = existing.length;
+  const ds=`${y}-${pad2(m+1)}-${pad2(d)}`;
+  const newId=`${y}-${m}-${d}-${subId}`;
+  const r={id:newId,y,m,d,ds,aid:'',name:'',prod:'',price:'',phone:'',cc:'+971',un:'N',dd:'',status:'Pending',note:'',_e:false,sub:subId};
+  rows.push(r);saveR();
+  expanded[newId]=true;
+  renderCards();
+  setTimeout(()=>{const el=document.getElementById('mc-'+newId);if(el)el.scrollIntoView({block:'nearest',behavior:'smooth'});},80);
 }
 function toggleCard(id){expanded[id]=!expanded[id];renderCards();setTimeout(()=>{const el=document.getElementById('mc-'+id);if(el)el.scrollIntoView({block:'nearest',behavior:'smooth'});},60);}
 
@@ -718,7 +745,7 @@ function updDate(id,v,d){let r=rows.find(r=>r.id===id);if(!r)r=ensureRow(curYear
 function updUN(id,v,d){let r=rows.find(r=>r.id===id);if(!r)r=ensureRow(curYear,curMonth,d);r.un=v;if(v!=='C'&&r.ds)r.dd=calcDue(r.ds,v);saveR();renderCards();}
 
 // ── INVOICE PDF ──
-function genInvoice(id){
+function dlInvoice(id){
   const r=rows.find(r=>r.id===id);if(!r)return;
   cfg.invCount=(cfg.invCount||0)+1;saveC();
   const num=String(cfg.invCount).padStart(5,'0');
@@ -761,15 +788,12 @@ function genInvoice(id){
 </div>
 <div class="ftr"><span style="font-size:10px;color:#c0c8d4;">${t('invFooter')}</span><span style="font-size:10px;color:#c0c8d4;">wazen</span></div>
 </div></div><script>window.onload=()=>window.print();<\/script></body></html>`;
-  // Download as HTML file that auto-prints (works on mobile)
-  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download=`wazen-invoice-${num}.html`;
-  document.body.appendChild(a);a.click();
-  document.body.removeChild(a);URL.revokeObjectURL(url);
+  // Open invoice in new window
+  const w = window.open('', '_blank');
+  if(w){ w.document.open(); w.document.write(html); w.document.close(); }
+  else { alert(lang==='ar'?'افتح النافذة المنبثقة في المتصفح':'Allow popups in browser'); }
 }
-function sendWA(id){
+function doWA(id){
   const r=rows.find(r=>r.id===id);if(!r)return;
   const curr=cfg.curr||'د.إ';
   const price=getPrice(r);
@@ -789,9 +813,11 @@ function sendWA(id){
 ` +
     `
 ${lang==='ar'?'شكراً لثقتكم 🤍':'Thank you 🤍'}`;
-  const phone=(r.phone||'').replace(/[^0-9+]/g,'');
-  const url='https://wa.me/'+(phone||'')+"?text="+encodeURIComponent(msg);
-  window.location.href=url;
+  const cc=(r.cc||'+971').replace('+','');
+  const phone=(r.phone||'').replace(/[^0-9]/g,'');
+  const fullPhone=phone?cc+phone:'';
+  const url='https://wa.me/'+(fullPhone||'')+"?text="+encodeURIComponent(msg);
+  const a2=document.createElement('a');a2.href=url;a2.target='_blank';document.body.appendChild(a2);a2.click();setTimeout(()=>document.body.removeChild(a2),100);
 }
 
 function svgLogo(col,size=22){return`<svg width="${size}" height="${size}" viewBox="0 0 36 38" fill="none"><rect x="2" y="2" width="32" height="4.5" rx="2.25" fill="${col}"/><rect x="2" y="10" width="24" height="4.5" rx="2.25" fill="${col}"/><rect x="8" y="18" width="26" height="4.5" rx="2.25" fill="${col}"/><circle cx="18" cy="32" r="4" fill="${col==='#fff'?'#06d6a0':col}"/></svg>`;}
