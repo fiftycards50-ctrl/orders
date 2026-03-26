@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>وازن — الشروط والخصوصية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Almarai:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --p:#1a1a2e;--g:#06d6a0;--bg:#f7f9fc;
+  --tx:#1a1a2e;--mu:#718096;--br:#e8ecf0;
+  --w:#ffffff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--tx);direction:rtl;}
+
+/* NAV */
+nav{background:var(--p);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.nav-logo{display:flex;align-items:center;gap:8px;}
+.nav-logo span{font-family:'Almarai',sans-serif;font-size:18px;font-weight:800;color:white;}
+.nav-back{background:rgba(255,255,255,0.1);border:none;color:white;font-family:'Cairo',sans-serif;font-size:12px;padding:6px 14px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:5px;}
+
+/* TABS */
+.tab-bar{background:var(--w);border-bottom:1px solid var(--br);padding:0 20px;display:flex;gap:0;position:sticky;top:52px;z-index:99;}
+.tab-btn{padding:14px 20px;font-family:'Cairo',sans-serif;font-size:13px;font-weight:600;background:transparent;border:none;border-bottom:3px solid transparent;cursor:pointer;color:var(--mu);transition:all 0.15s;}
+.tab-btn.on{color:var(--p);border-bottom-color:var(--g);}
+
+/* CONTENT */
+.content{max-width:680px;margin:0 auto;padding:28px 20px 80px;}
+.section-hidden{display:none;}
+
+/* Header card */
+.doc-header{background:var(--p);border-radius:14px;padding:24px;margin-bottom:24px;color:white;}
+.doc-header h1{font-family:'Almarai',sans-serif;font-size:20px;font-weight:800;margin-bottom:6px;}
+.doc-header p{font-size:12px;color:rgba(255,255,255,0.5);}
+.doc-header .badge{display:inline-block;background:rgba(6,214,160,0.15);color:var(--g);border:1px solid rgba(6,214,160,0.3);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;margin-top:10px;}
+
+/* Sections */
+.sec{background:var(--w);border-radius:12px;padding:20px;margin-bottom:12px;border:0.5px solid var(--br);}
+.sec-title{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.sec-num{width:28px;height:28px;background:var(--p);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;}
+.sec-title h2{font-size:14px;font-weight:700;color:var(--p);}
+.sec p{font-size:13px;color:var(--mu);line-height:1.8;margin-bottom:8px;}
+.sec p:last-child{margin-bottom:0;}
+.sec ul{padding-right:16px;margin-bottom:8px;}
+.sec ul li{font-size:13px;color:var(--mu);line-height:1.8;margin-bottom:4px;}
+.highlight{background:#f0fdf4;border-right:3px solid var(--g);border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0;}
+.highlight p{color:#1a1a2e;font-size:12px;font-weight:600;}
+.warn{background:#fff8f0;border-right:3px solid #f4a61e;border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0;}
+.warn p{color:#633806;font-size:12px;}
+
+/* Footer */
+.doc-footer{background:var(--w);border:0.5px solid var(--br);border-radius:12px;padding:16px 20px;text-align:center;}
+.doc-footer p{font-size:12px;color:var(--mu);line-height:1.8;}
+.doc-footer strong{color:var(--p);}
+
+/* Accept bar */
+.accept-bar{position:fixed;bottom:0;right:0;left:0;background:var(--w);border-top:1px solid var(--br);padding:12px 20px;display:flex;gap:10px;align-items:center;}
+.accept-btn{flex:1;height:44px;background:var(--p);border:none;border-radius:10px;color:white;font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <svg width="20" height="21" viewBox="0 0 36 38" fill="none"><rect x="2" y="2" width="32" height="4.5" rx="2.25" fill="white"/><rect x="2" y="10" width="24" height="4.5" rx="2.25" fill="white"/><rect x="8" y="18" width="26" height="4.5" rx="2.25" fill="white"/><circle cx="18" cy="32" r="4" fill="#06d6a0"/></svg>
+    <span>وازن</span>
+  </div>
+  <button class="nav-back" onclick="history.back()">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    رجوع
+  </button>
+</nav>
+
+<div class="tab-bar">
+  <button class="tab-btn on" onclick="showTab('terms',this)">شروط الاستخدام</button>
+  <button class="tab-btn" onclick="showTab('privacy',this)">سياسة الخصوصية</button>
+</div>
+
+<!-- ══ TERMS ══ -->
+<div class="content" id="terms">
+
+  <div class="doc-header">
+    <h1>شروط الاستخدام</h1>
+    <p>يرجى قراءة هذه الشروط بعناية قبل استخدام وازن</p>
+    <span class="badge">آخر تحديث: مارس 2026</span>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><div class="sec-num">1</div><h2>القبول والموافقة</h2></div>
+    <p>باستخدامك لتطبيق وازن، فإنك توافق على الالتزام بهذه الشروط. إذا كنت لا توافق على أي جزء منها، يرجى عدم استخدام الخدمة.</p>
+    <div class="highlight"><p>استخدامك للتطبيق يعني موافقتك التامة على جميع الشروط الواردة هنا.</p></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><div class="sec-num">2</div><h2>الخدمة المقدمة</h2></div>
+    <p>وازن هو نظام لمتابعة طلبات التجار يتيح لك:</p>
+    <ul>
+      <li>تتبع الطلبات ومواعيد التسليم</li>
+      <li>إدارة بيانات العملاء والمنتجات</li>
+      <li>إنشاء الفواتير وإرسالها</li>
+      <li>التواصل مع العملاء عبر واتساب</li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><div class="sec-num">3</div><h2>حسابك ومسؤوليتك</h2></div>
+    <p>أنت مسؤول عن:</p>
+    <ul>
+      <li>الحفاظ على سرية كلمة المرور</li>
+      <li>دقة البيانات التي تدخلها</li>
+      <li>جميع الأنشطة التي تتم من حسابك</li>
+    </ul>
+    <div class="warn"><p>في حال اشتباهك باختراق حسابك، أخبرنا فوراً على support@wazen.app</p></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><div class="sec-num">4</div><h2>الاشتراك والدفع</h2></div>
+    <p>يقدم وازن فترة تجربة مجانية مدة 7 أيام بعدها:</p>
+    <ul>
+      <li>الاشتراك السنوي: 10 دولار فقط</li>
+      <li>يتجدد تلقائياً ما لم تلغه قبل انتهاء الفترة</li>
+      <li>لا استرداد للمبالغ بعد التجديد</li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><div class="sec-num">5</div><h2>الاستخدام المقبول</h2></div>
+    <p>يُمنع استخدام وازن في:</p>
+    <ul>
+      <li>أي نشاط غير قانوني أو محظور</li>
+      <li>إدخال بيانات مزيفة أو مضللة</li>
+      <li>محاولة اختراق أو التلاعب بالنظام</li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><div class="sec-num">6</div><h2>حدود المسؤولية</h2></div>
+    <p>وازن غير مسؤول عن أي خسائر ناتجة عن انقطاع الخدمة أو فقدان البيانات. ننصح بعمل نسخ احتياطية دورية لبياناتك المهمة.</p>
+  </div>
+
+  <div class="doc-footer">
+    <p>للاستفسارات: <strong>support@wazen.app</strong></p>
+    <p>هذه الشروط خاضعة للقوانين المعمول بها في الإمارات العربية المتحدة</p>
+  </div>
+
+</div>
+
+<!-- ══ PRIVACY ══ -->
+<div class="content section-hidden" id="privacy">
+
+  <div class="doc-header">
+    <h1>سياسة الخصوصية</h1>
+    <p>نحن نحترم خصوصيتك ونحمي بياناتك</p>
+    <span class="badge">آخر تحديث: مارس 2026</span>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><div class="sec-num">1</div><h2>البيانات التي نجمعها</h2></div>
+    <p>نجمع فقط ما يلزم لتشغيل الخدمة:</p>
+    <ul>
+      <li>الاسم وعنوان البريد الإلكتروني</li>
+      <li>اسم المتجر</li>
+      <li>بيانات الطلبات التي تدخلها أنت</li>
+      <li>معلومات الجهاز ونظام التشغيل</li>
+    </ul>
+    <div class="highlight"><p>لا نجمع بيانات بطاقات الدفع — المدفوعات تتم عبر بوابات آمنة خارجية.</p></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><div class="sec-num">2</div><h2>كيف نستخدم بياناتك</h2></div>
+    <ul>
+      <li>تشغيل الخدمة وتحسينها</li>
+      <li>إرسال إشعارات مهمة عن حسابك</li>
+      <li>الدعم الفني عند طلبه</li>
+      <li>تحليل الاستخدام لتطوير التطبيق</li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><div class="sec-num">3</div><h2>مشاركة البيانات</h2></div>
+    <p>لا نبيع بياناتك ولا نشاركها مع أطراف ثالثة إلا في هذه الحالات:</p>
+    <ul>
+      <li>بموافقتك الصريحة</li>
+      <li>لموفري الخدمات الضروريين (الاستضافة، الدفع)</li>
+      <li>إذا طُلب منا قانونياً</li>
+    </ul>
+    <div class="warn"><p>نستخدم Google Firebase لتخزين البيانات — وهو خاضع لسياسة خصوصية Google.</p></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><div class="sec-num">4</div><h2>تسجيل الدخول بـ Google</h2></div>
+    <p>عند استخدام تسجيل الدخول بـ Gmail، نحصل على:</p>
+    <ul>
+      <li>اسمك وعنوان إيميلك فقط</li>
+      <li>صورة الملف الشخصي (اختيارية)</li>
+    </ul>
+    <p>لا نستطيع الوصول لكلمة مرور Google أو أي بيانات أخرى.</p>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><div class="sec-num">5</div><h2>حقوقك</h2></div>
+    <p>يحق لك في أي وقت:</p>
+    <ul>
+      <li>طلب نسخة من بياناتك</li>
+      <li>تصحيح بياناتك الخاطئة</li>
+      <li>حذف حسابك وجميع بياناتك نهائياً</li>
+      <li>الاعتراض على معالجة بياناتك</li>
+    </ul>
+    <div class="highlight"><p>لحذف حسابك أو طلب بياناتك: support@wazen.app</p></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><div class="sec-num">6</div><h2>أمان البيانات</h2></div>
+    <p>نحمي بياناتك باستخدام:</p>
+    <ul>
+      <li>تشفير SSL/TLS لجميع الاتصالات</li>
+      <li>Firebase Security Rules للتحكم بالوصول</li>
+      <li>نسخ احتياطية تلقائية يومية</li>
+    </ul>
+  </div>
+
+  <div class="doc-footer">
+    <p>للاستفسارات عن الخصوصية: <strong>privacy@wazen.app</strong></p>
+    <p>هذه السياسة متوافقة مع اللوائح المعمول بها في الإمارات العربية المتحدة</p>
+  </div>
+
+</div>
+
+<div class="accept-bar">
+  <button class="accept-btn" onclick="history.back()">فهمت وأوافق ✓</button>
+</div>
+
+<script>
+function showTab(id,btn){
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  document.querySelectorAll('.content').forEach(function(c){c.classList.add('section-hidden');});
+  document.getElementById(id).classList.remove('section-hidden');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
